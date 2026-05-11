@@ -871,30 +871,34 @@ MonoBehaviour:
   waves:
   - waveName: 1
     enemyPrefab: {fileID: 5461036874356811074, guid: 4eb6865165d011942b808590006bd7b5, type: 3}
-    count: 1
-    rate: 1
+    maxEnemiesAtOnce: 2
+    duration: 15
+    spawnRate: 5
   - waveName: 2
     enemyPrefab: {fileID: 5461036874356811074, guid: 4eb6865165d011942b808590006bd7b5, type: 3}
-    count: 2
-    rate: 1.5
+    maxEnemiesAtOnce: 3
+    duration: 15
+    spawnRate: 5
   - waveName: 3
     enemyPrefab: {fileID: 5461036874356811074, guid: 4eb6865165d011942b808590006bd7b5, type: 3}
-    count: 3
-    rate: 2
+    maxEnemiesAtOnce: 4
+    duration: 15
+    spawnRate: 5
   - waveName: 4
     enemyPrefab: {fileID: 5461036874356811074, guid: 4eb6865165d011942b808590006bd7b5, type: 3}
-    count: 4
-    rate: 2.5
+    maxEnemiesAtOnce: 5
+    duration: 15
+    spawnRate: 5
   - waveName: 5
     enemyPrefab: {fileID: 5461036874356811074, guid: 4eb6865165d011942b808590006bd7b5, type: 3}
-    count: 5
-    rate: 3
+    maxEnemiesAtOnce: 5
+    duration: 15
+    spawnRate: 5
   timeBetweenWaves: 5
   player: {fileID: 1123110896450013458}
   minSpawnRadius: 10
   maxSpawnRadius: 20
   bossPrefab: {fileID: 5461036874356811074, guid: ec2d88283ff784947a88b2438ebcdc30, type: 3}
-  timeBeforeBoss: 3
 --- !u!4 &2082173773
 Transform:
   m_ObjectHideFlags: 0
