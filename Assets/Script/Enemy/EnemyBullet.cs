@@ -6,7 +6,6 @@ public class EnemyBullet : MonoBehaviour
 
     void Start() 
     {
-        // Supaya tidak menumpuk di memori, hancur dalam 3 detik
         Destroy(gameObject, 3f);
     }
 
@@ -15,20 +14,17 @@ public class EnemyBullet : MonoBehaviour
         // Cek apakah yang ditabrak adalah Player
         if (hitInfo.CompareTag("Player")) 
         {
-            // Ambil komponen Health dari Player
             Health playerHealth = hitInfo.GetComponent<Health>();
-
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);
             }
 
-            // Peluru musuh hancur setelah kena player
             Destroy(gameObject);
         }
         
-        // Opsional: Peluru hancur jika kena tembok/lingkungan (Tag "Environment")
-        if (hitInfo.CompareTag("Environment"))
+        // KOREKSI LOGIKA: Peluru musuh juga hancur jika menabrak Layer "Obstacles"
+        if (hitInfo.gameObject.layer == LayerMask.NameToLayer("Obstacles"))
         {
             Destroy(gameObject);
         }

@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D hitInfo) 
     {
-        // Jika kena objek dengan Tag "Enemy"
+        // 1. Jika kena objek dengan Tag "Enemy"
         if (hitInfo.CompareTag("Enemy")) 
         {
             // Ambil komponen Health dari objek yang ditabrak
@@ -25,6 +25,12 @@ public class Bullet : MonoBehaviour
             }
 
             // Hancurkan pelurunya sendiri
+            Destroy(gameObject);
+        }
+
+        // 2. KOREKSI LOGIKA: Peluru player juga hancur jika menabrak rintangan peta
+        if (hitInfo.gameObject.layer == LayerMask.NameToLayer("Obstacles"))
+        {
             Destroy(gameObject);
         }
     }

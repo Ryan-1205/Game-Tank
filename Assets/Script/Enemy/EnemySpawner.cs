@@ -21,6 +21,9 @@ public class EnemySpawner : MonoBehaviour
     public float minSpawnRadius = 15f;
     public float maxSpawnRadius = 20f;
 
+    [Header("Map Boundary Settings")]
+    public Collider2D mapCollider; // Taruh CameraBounds atau Collider peta di sini
+
     [Header("Boss Settings")]
     public GameObject bossPrefab;
 
@@ -82,9 +85,22 @@ public class EnemySpawner : MonoBehaviour
     {
         if (player == null || _enemy == null) return;
 
+        // 1. Hitung posisi acak lingkaran di sekitar player
         Vector2 randomDir = Random.insideUnitCircle.normalized;
         float spawnDistance = Random.Range(minSpawnRadius, maxSpawnRadius);
         Vector3 spawnPos = player.position + (Vector3)(randomDir * spawnDistance);
+
+        // 2. Batasi posisi berdasarkan batas Collider Peta jika ada
+        if (mapCollider != null)
+        {
+            Bounds mapBounds = mapCollider.bounds;
+
+            // Paksa koordinat agar tidak melewati batas minimal dan maksimal collider
+            float clampedX = Mathf.Clamp(spawnPos.x, mapBounds.min.x, mapBounds.max.x);
+            float clampedY = Mathf.Clamp(spawnPos.y, mapBounds.min.y, mapBounds.max.y);
+
+            spawnPos = new Vector3(clampedX, clampedY, 0f);
+        }
 
         Instantiate(_enemy, spawnPos, Quaternion.identity);
     }
@@ -96,6 +112,16 @@ public class EnemySpawner : MonoBehaviour
         
         Vector2 randomDir = Random.insideUnitCircle.normalized;
         Vector3 spawnPos = player.position + (Vector3)(randomDir * 18f);
+
+        // Batasi posisi Boss agar tidak spawn di luar batas peta
+        if (mapCollider != null)
+        {
+            Bounds mapBounds = mapCollider.bounds;
+            float clampedX = Mathf.Clamp(spawnPos.x, mapBounds.min.x, mapBounds.max.x);
+            float clampedY = Mathf.Clamp(spawnPos.y, mapBounds.min.y, mapBounds.max.y);
+            spawnPos = new Vector3(clampedX, clampedY, 0f);
+        }
+
         Instantiate(bossPrefab, spawnPos, Quaternion.identity);
         Debug.Log("BOSS MUNCUL!");
     }
