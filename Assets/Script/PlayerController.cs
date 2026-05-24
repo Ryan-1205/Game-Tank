@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     public Transform firePoint;     // Objek kosong di ujung laras tank
     public float bulletForce = 20f;
 
+    // BARIS BARU: Tempat memasukkan prefab cahaya di Inspector
+    public GameObject muzzleFlashPrefab; 
+
     Vector2 movement;
     Vector2 mousePos;
 
@@ -31,32 +34,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
-[Header("Smooth Settings")]
-public float rotationSpeed = 10f; // Semakin besar, semakin cepat muternya
+    [Header("Smooth Settings")]
+    public float rotationSpeed = 10f; // Semakin besar, semakin cepat muternya
 
-void FixedUpdate()
-{
-    // 1. Gerak badan tank
-    rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
-
-    // 2. Rotasi BADAN tank (Smooth Rotation)
-    if (movement != Vector2.zero)
+    void FixedUpdate()
     {
-        float targetAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
-        
-        // Menggunakan LerpAngle supaya transisinya halus dan tidak patah-patah
-        float smoothAngle = Mathf.LerpAngle(rb.rotation, targetAngle, rotationSpeed * Time.fixedDeltaTime);
-        rb.rotation = smoothAngle;
-    }
+        // 1. Gerak badan tank
+        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
 
-    // 3. Rotasi TURRET mengikuti Mouse
-    Vector2 lookDir = mousePos - rb.position;
-    float turretAngle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
-    
-    // Tips: Turret juga bisa di-lerp kalau mau terasa lebih realistis beratnya
-    turret.rotation = Quaternion.Euler(0, 0, turretAngle);
-}
+        // 2. Rotasi BADAN tank (Smooth Rotation)
+        if (movement != Vector2.zero)
+        {
+            float targetAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
+            
+            // Menggunakan LerpAngle supaya transisinya halus dan tidak patah-patah
+            float smoothAngle = Mathf.LerpAngle(rb.rotation, targetAngle, rotationSpeed * Time.fixedDeltaTime);
+            rb.rotation = smoothAngle;
+        }
+
+        // 3. Rotasi TURRET mengikuti Mouse
+        Vector2 lookDir = mousePos - rb.position;
+        float turretAngle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
+        
+        // Tips: Turret juga bisa di-lerp kalau mau terasa lebih realistis beratnya
+        turret.rotation = Quaternion.Euler(0, 0, turretAngle);
+    }
 
     void Shoot()
     {
@@ -66,7 +68,20 @@ void FixedUpdate()
         // 2. Ambil Rigidbody2D peluru
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
         
-        // 3. Dorong peluru ke depan (arah atas laras karena rotasi 2D Unity biasanya pake sumbu Y/Up)
+        // 3. Dorong peluru ke depan
         bulletRb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
+
+        // --- BARIS BARU: LOGIKA MEMUNCULKAN CAHAYA ---
+        if (muzzleFlashPrefab != null)
+        {
+            // Munculkan objek cahaya tepat di posisi firePoint
+            GameObject flash = Instantiate(muzzleFlashPrefab, firePoint.position, firePoint.rotation);
+            
+            // Tempelkan objek cahaya sebagai anak dari firePoint agar ikut bergerak
+            flash.transform.SetParent(firePoint);
+
+            // Hancurkan objek cahaya setelah 0.1 detik (kilatan cepat)
+            Destroy(flash, 0.1f);
+        }
     }
 }

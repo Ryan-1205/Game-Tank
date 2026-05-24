@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 2155445054456749806}
   - component: {fileID: 204125664581444413}
   - component: {fileID: 1062016418592003673}
-  - component: {fileID: 7217238367150419133}
+  - component: {fileID: -1002878722873712090}
   m_Layer: 0
-  m_Name: Peluru
-  m_TagString: Bullet
+  m_Name: EnemyBullet
+  m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.028123, y: 1.028123, z: 1.4327167}
+  m_LocalScale: {x: 1.028123, y: 1.028123, z: 1.3203067}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -157,7 +157,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &7217238367150419133
+--- !u!114 &-1002878722873712090
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,7 +166,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4050720518298332091}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe1a1125b13826045bfe89e75107c9c0, type: 3}
+  m_Script: {fileID: 11500000, guid: d69fdb105cb46ee40b4d56e3102ff1ff, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBullet
   damage: 1
+  impactExplosionPrefab: {fileID: 6000871978278344180, guid: aa7906cd903bee9449860baa245a1e3b, type: 3}
