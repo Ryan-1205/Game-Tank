@@ -15,7 +15,7 @@ public class EnemyFollow : MonoBehaviour
     public float fireRate = 2f;          
     private float nextFireTime;          
 
-    // Tempat memasukkan prefab cahaya di Inspector musuh
+    // Tempat memasukkan prefab cahaya di Inspector musuh (Punya Lu)
     public GameObject muzzleFlashPrefab; 
 
     [Header("AI Obstacle Avoidance")]
@@ -23,12 +23,36 @@ public class EnemyFollow : MonoBehaviour
     public float detectionDistance = 2f; // Jarak sensor mendeteksi batu
     public float avoidanceForce = 2f;    // Seberapa tajam musuh membelok menghindari batu
 
+    // --- INTEGRASI AUDIO GABUNGAN (Punya Fikri) ---
+    [Header("Audio Settings (NPC)")]
+    public float minEnginePitch = 0.7f;  // Nada mesin terendah
+    public float maxEnginePitch = 1.2f;  // Nada mesin tertinggi
+    private AudioSource[] audioSources;  // Array penampung komponen
+    private AudioSource engineAudio;     // Slot suara mesin (Audio Source 1)
+    private AudioSource shootAudio;      // Slot suara tembak (Audio Source 2)
+
     private Transform player;
 
     void Start()
     {
         GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null) player = playerObj.transform;
+
+        // --- AMBIL AUDIO OTOMATIS (Punya Fikri) ---
+        audioSources = GetComponents<AudioSource>();
+        if (audioSources.Length >= 2)
+        {
+            engineAudio = audioSources[0]; // Audio Source pertama = mesin
+            shootAudio = audioSources[1];  // Audio Source kedua = tembakan
+            
+            // Hidupkan suara mesin diesel saat musuh spawn
+            engineAudio.loop = true;
+            engineAudio.Play();
+        }
+        else
+        {
+            Debug.LogWarning("Peringatan: " + gameObject.name + " butuh 2 Audio Source di Inspector agar suara mesin & tembakan berfungsi!");
+        }
     }
 
     void Update()
@@ -60,6 +84,13 @@ public class EnemyFollow : MonoBehaviour
                 bodyTransform.rotation = Quaternion.RotateTowards(bodyTransform.rotation, targetBodyRotation, bodyRotationSpeed * Time.deltaTime);
             }
 
+            // --- INTEGRASI AUDIO MESIN DINAMIS (Punya Fikri) ---
+            // Suara mesin bakal ngegas/berubah pitch secara acak halus biar kerasa hidup
+            if (engineAudio != null)
+            {
+                engineAudio.pitch = Mathf.MoveTowards(engineAudio.pitch, Random.Range(minEnginePitch, maxEnginePitch), Time.deltaTime * 0.5f);
+            }
+
             // --- 3. LOGIKA MEMBIDIK (TURET TETAP LOCK PLAYER) ---
             if (turretTransform != null)
             {
@@ -84,23 +115,26 @@ public class EnemyFollow : MonoBehaviour
             // 1. Munculkan peluru musuh
             GameObject bullet = Instantiate(enemyBulletPrefab, firePoint.position, firePoint.rotation);
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-            rb.AddForce(firePoint.up * 10f, ForceMode2D.Impulse);
+            if (rb != null)
+            {
+                rb.AddForce(firePoint.up * 10f, ForceMode2D.Impulse);
+            }
 
-            // --- KOREKSI UTAMA: HITUNG ULANG ROTASI CAHAYA AGAR SEARAH TURET ---
+            // 2. MUNCULKAN VISUAL EFEK CAHAYA (Punya Lu)
             if (muzzleFlashPrefab != null)
             {
-                // Ambil arah hadap atas dari firePoint (moncong turet)
                 Vector2 forwardDirection = firePoint.up;
-                
-                // Ubah arah fisis tersebut menjadi sudut derajat Z
                 float angle = Mathf.Atan2(forwardDirection.y, forwardDirection.x) * Mathf.Rad2Deg - 90f;
                 Quaternion exactRotation = Quaternion.Euler(0, 0, angle);
 
-                // Spawn cahaya menggunakan koordinat sudut yang sudah dikunci lurus
                 GameObject flash = Instantiate(muzzleFlashPrefab, firePoint.position, exactRotation);
-
-                // Hancurkan objek cahaya setelah 0.1 detik
                 Destroy(flash, 0.1f);
+            }
+
+            // 3. BUNYIKAN SUARA TEMBAKAN (Punya Fikri)
+            if (shootAudio != null && shootAudio.clip != null)
+            {
+                shootAudio.PlayOneShot(shootAudio.clip);
             }
         }
     }

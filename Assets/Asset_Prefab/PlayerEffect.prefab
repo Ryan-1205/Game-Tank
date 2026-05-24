@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6933859971003712731}
   - component: {fileID: 197435905139306168}
   m_Layer: 0
-  m_Name: Sprite_Effects_Exhaust_01_003_0
+  m_Name: PlayerEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
