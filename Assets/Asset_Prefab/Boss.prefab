@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 1525918786342814866}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Enemy
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -363,6 +363,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7825440cf8e8c554c8d74087353ab61b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 10
+  maxHealth: 5
   deathExplosionPrefab: {fileID: 7447569067106369559, guid: 379968b4b9be86942839f95c9230e8f3, type: 3}
   deathSoundClip: {fileID: 0}
+  coinPrefab: {fileID: 2328652593923856779, guid: 13f852dc83e8f594a9bebadcded38725, type: 3}
+  dropChance: 100

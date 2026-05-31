@@ -19,8 +19,8 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D hitInfo) 
     {
-        // 1. Jika kena objek dengan Tag "Enemy"
-        if (hitInfo.CompareTag("Enemy")) 
+        // === KOREKSI UTAMA: Cek jika kena objek dengan Tag "Enemy" ATAU Tag "Boss" ===
+        if (hitInfo.CompareTag("Enemy") || hitInfo.CompareTag("Boss")) 
         {
             Health enemyHealth = hitInfo.GetComponent<Health>();
 

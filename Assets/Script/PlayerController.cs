@@ -12,8 +12,12 @@ public class PlayerController : MonoBehaviour
     public Transform firePoint;     // Objek kosong di ujung laras tank
     public float bulletForce = 20f;
 
-    // BARIS BARU: Tempat memasukkan prefab cahaya di Inspector
+    // Tempat memasukkan prefab cahaya di Inspector
     public GameObject muzzleFlashPrefab; 
+
+    // === BARIS BARU: SISTEM EKONOMI SHOP ===
+    [Header("Economy System")]
+    public int totalCoins = 0; // Tabungan koin awal player (bisa dipantau di Inspector)
 
     Vector2 movement;
     Vector2 mousePos;
@@ -71,7 +75,7 @@ public class PlayerController : MonoBehaviour
         // 3. Dorong peluru ke depan
         bulletRb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
 
-        // --- BARIS BARU: LOGIKA MEMUNCULKAN CAHAYA ---
+        // --- LOGIKA MEMUNCULKAN CAHAYA ---
         if (muzzleFlashPrefab != null)
         {
             // Munculkan objek cahaya tepat di posisi firePoint
@@ -83,5 +87,15 @@ public class PlayerController : MonoBehaviour
             // Hancurkan objek cahaya setelah 0.1 detik (kilatan cepat)
             Destroy(flash, 0.1f);
         }
+    }
+
+    // === FUNCTION BARU: MENAMBAH KOIN KE DOMPET ===
+    // Fungsi ini bakal dipanggil oleh script CoinItem.cs pas koin ketabrak tank player
+    public void AddCoins(int amount)
+    {
+        totalCoins += amount;
+        Debug.Log($"<color=#FFD700><b>[WALLET]</b> Koin Bertambah! +{amount} | Total Dompet: {totalCoins} Koin</color>");
+        
+        // Nanti di sini tempat kita buat nge-update teks koin di UI Canvas UI lo
     }
 }
