@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour
     [Header("Visual Impact Effect")]
     public GameObject impactExplosionPrefab; 
 
-    // BARIS BARU: Slot untuk memasukkan file audio ledakan peluru player (.mp3/.wav)
+    // Slot untuk memasukkan file audio ledakan peluru player (.mp3/.wav)
     [Header("Audio Impact Effect")]
     public AudioClip impactSoundClip; 
 
@@ -19,21 +19,28 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D hitInfo) 
     {
-        // === KOREKSI UTAMA: Cek jika kena objek dengan Tag "Enemy" ATAU Tag "Boss" ===
+        // === CEK TARGET: Enemy atau Boss ===
         if (hitInfo.CompareTag("Enemy") || hitInfo.CompareTag("Boss")) 
         {
+            // PENCERIAN SMART 2D: Cari script Health di objek itu, atau di parent/children-nya
             Health enemyHealth = hitInfo.GetComponent<Health>();
+            
+            if (enemyHealth == null)
+            {
+                enemyHealth = hitInfo.GetComponentInParent<Health>();
+            }
 
+            // Jika script Health ketemu, eksekusi pengurangan darah bawaan template
             if (enemyHealth != null)
             {
-                enemyHealth.TakeDamage(damage);
+                enemyHealth.ApplyDamage(damage); // Memicu event OnHealthChanged agar UI bar berkurang 
             }
 
             // Eksekusi efek visual dan suara sebelum peluru hancur
             PlayImpactEffects();
 
             Destroy(gameObject);
-            return; // Keluar dari fungsi agar tidak mengecek if di bawahnya lagi
+            return; // Keluar dari fungsi agar tidak mengecek rintangan di bawah
         }
 
         // 2. Jika menabrak rintangan peta (Layer "Obstacles")
@@ -55,7 +62,7 @@ public class Bullet : MonoBehaviour
             Instantiate(impactExplosionPrefab, transform.position, Quaternion.identity);
         }
 
-        // KOREKSI AUDIO: Mainkan suara ledakan peluru player secara mandiri di posisi 3D
+        // Mainkan suara ledakan peluru player secara mandiri di posisi tabrakan
         if (impactSoundClip != null)
         {
             AudioSource.PlayClipAtPoint(impactSoundClip, transform.position);

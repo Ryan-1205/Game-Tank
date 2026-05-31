@@ -1,86 +1,116 @@
 using UnityEngine;
+using Ilumisoft.HealthSystem; // WAJIB: Biar bisa tersambung ke sistem UI aset template
 
-public class Health : MonoBehaviour
+public class Health : HealthComponent // KOREKSI: Sekarang mewarisi class bawaan aset
 {
-    public int maxHealth = 3;
-    private int currentHealth;
+    [Header("Base Health Settings (Aset Template)")]
+    [SerializeField] private float maxHealth = 3.0f;
+    [SerializeField, Range(0, 1)] private float initialRatio = 1.0f;
 
-    // Slot untuk memasukkan prefab ledakan besar di Inspector
-    [Header("Death Visual Effect")]
+    // Override properti wajib bawaan Ilumisoft Health System
+    public override float MaxHealth { get => maxHealth; set => maxHealth = value; }
+    public override float CurrentHealth { get; set; } = 0.0f;
+    public override bool IsAlive => CurrentHealth > 0.0f;
+
+    [Header("Death Visual Effect (Punya Lu)")]
     public GameObject deathExplosionPrefab; 
 
-    // Slot untuk memasukkan file audio ledakan besar tank hancur (.mp3/.wav)
-    [Header("Death Audio Effect")]
+    [Header("Death Audio Effect (Punya Lu)")]
     public AudioClip deathSoundClip;
 
-    // === BARIS BARU: SISTEM EKONOMI SHOP ===
-    [Header("Loot Settings (Khusus Musuh)")]
-    public GameObject coinPrefab; // Seret prefab Coin lo ke sini di Inspector
-    [Range(0, 100)] public float dropChance = 100f; // Peluang koin muncul (100 = pasti muncul)
+    [Header("Loot Settings (Sistem Belanja Lu)")]
+    public GameObject coinPrefab; 
+    [Range(0, 100)] public float dropChance = 100f; 
 
-    void Start()
+    private void Awake()
     {
-        currentHealth = maxHealth;
+        // Set darah awal sesuai dengan rasio di Inspector template
+        SetHealth(MaxHealth * initialRatio);
     }
 
-    public void TakeDamage(int damage)
+    // Fungsi bawaan template untuk mengatur nilai darah secara presisi
+    public override void SetHealth(float health)
     {
-        currentHealth -= damage;
-        Debug.Log(gameObject.name + " kena hit! Sisa nyawa: " + currentHealth);
+        float previousHealth = CurrentHealth;
+        CurrentHealth = Mathf.Clamp(health, 0, MaxHealth);
+        float difference = CurrentHealth - previousHealth;
 
-        if (currentHealth <= 0)
+        if (Mathf.Abs(difference) > 0.0f)
         {
-            Die();
+            OnHealthChanged?.Invoke(difference); // Mengirim sinyal data ke UI Health Bar
         }
     }
 
-    void Die()
-{
-    // 1. Spawn efek visual ledakan besar lu sebelum tank hancur
-    if (deathExplosionPrefab != null)
+    // Fungsi bawaan template untuk menambah darah (Medkit/Heal)
+    public override void AddHealth(float amount)
     {
-        Instantiate(deathExplosionPrefab, transform.position, Quaternion.identity);
-    }
+        if (!IsAlive) return;
 
-    // 2. Bunyikan suara ledakan hancur besar secara mandiri di posisi tank
-    if (deathSoundClip != null)
-    {
-        AudioSource.PlayClipAtPoint(deathSoundClip, transform.position);
-    }
+        float previousHealth = CurrentHealth;
+        CurrentHealth = Mathf.Clamp(CurrentHealth + amount, 0, MaxHealth);
+        float changeAmount = CurrentHealth - previousHealth;
 
-    // === 3. LOGIKA DROP COIN DENGAN PERBEDAAN NILAI ===
-    if (gameObject.CompareTag("Enemy") || gameObject.CompareTag("Boss"))
-    {
-        if (coinPrefab != null)
+        if (changeAmount > 0.0f)
         {
-            float randomRoll = Random.Range(0f, 100f);
-            if (randomRoll <= dropChance)
+            OnHealthChanged?.Invoke(changeAmount); // Update grafik Health Bar ke kanan
+        }
+    }
+
+    // === KOREKSI UTAMA: Pengganti Fungsi TakeDamage Lama ===
+    public override void ApplyDamage(float damage)
+    {
+        if (!IsAlive) return;
+
+        float previousHealth = CurrentHealth;
+        CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
+        float changeAmount = CurrentHealth - previousHealth;
+
+        Debug.Log($"{gameObject.name} terkena hit sebesar {damage}! Sisa nyawa: {CurrentHealth}");
+
+        if (Mathf.Abs(changeAmount) > 0.0f)
+        {
+            OnHealthChanged?.Invoke(changeAmount); // Sinyal agar UI Health Bar berkurang berkala
+
+            if (CurrentHealth <= 0.0f)
             {
-                // Spawn koin di posisi tank mati, dan simpan referensinya ke dalam variabel 'spawnedCoin'
-                GameObject spawnedCoin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
-                
-                // Ambil komponen CoinItem dari koin yang baru saja lahir
-                CoinItem coinScript = spawnedCoin.GetComponent<CoinItem>();
-                
-                if (coinScript != null)
-                {
-                    // Cek Tag objek ini untuk menentukan jumlah koinnya
-                    if (gameObject.CompareTag("Boss"))
-                    {
-                        coinScript.coinValue = 200; // Kalau Boss dapet 200
-                        Debug.Log($"<color=#90EE90><b>[LOOT]</b> BOSS hancur! Menjatuhkan Koin bernilai: 200</color>");
-                    }
-                    else
-                    {
-                        coinScript.coinValue = 100; // Kalau Enemy biasa dapet 100
-                        Debug.Log($"<color=#90EE90><b>[LOOT]</b> Enemy biasa hancur! Menjatuhkan Koin bernilai: 100</color>");
-                    }
-                }
+                Die(); // Panggil fungsi meledak dan drop coin milik lo
+                OnHealthEmpty?.Invoke(); // Sinyal tambahan opsional untuk sistem aset
             }
         }
     }
 
-    // Hancurkan objek tank asli (Player / Enemy / Boss)
-    Destroy(gameObject);
-}
+    // Fungsi kematian milik lo tetap dipertahankan seutuhnya
+    void Die()
+    {
+        if (deathExplosionPrefab != null)
+        {
+            Instantiate(deathExplosionPrefab, transform.position, Quaternion.identity);
+        }
+
+        if (deathSoundClip != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSoundClip, transform.position);
+        }
+
+        if (gameObject.CompareTag("Enemy") || gameObject.CompareTag("Boss"))
+        {
+            if (coinPrefab != null)
+            {
+                float randomRoll = Random.Range(0f, 100f);
+                if (randomRoll <= dropChance)
+                {
+                    GameObject spawnedCoin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
+                    CoinItem coinScript = spawnedCoin.GetComponent<CoinItem>();
+                    
+                    if (coinScript != null)
+                    {
+                        if (gameObject.CompareTag("Boss")) coinScript.coinValue = 200;
+                        else coinScript.coinValue = 100;
+                    }
+                }
+            }
+        }
+
+        Destroy(gameObject);
+    }
 }

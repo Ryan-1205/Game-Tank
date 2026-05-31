@@ -7,7 +7,7 @@ public class EnemyBullet : MonoBehaviour
     [Header("Visual Impact Effect")]
     public GameObject impactExplosionPrefab; 
 
-    // BARIS BARU: Slot untuk memasukkan file audio ledakan peluru (.mp3/.wav)
+    // Slot untuk memasukkan file audio ledakan peluru (.mp3/.wav)
     [Header("Audio Impact Effect")]
     public AudioClip impactSoundClip; 
 
@@ -22,10 +22,18 @@ public class EnemyBullet : MonoBehaviour
         // 1. Cek apakah yang ditabrak adalah Player
         if (hitInfo.CompareTag("Player")) 
         {
+            // PENCARIAN SMART 2D: Cari script Health di objek Player, atau di parent-nya
             Health playerHealth = hitInfo.GetComponent<Health>();
+            
+            if (playerHealth == null)
+            {
+                playerHealth = hitInfo.GetComponentInParent<Health>();
+            }
+
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(damage);
+                // Memicu pengurangan darah Player sekaligus memicu animasi Health Bar Player menyusut
+                playerHealth.ApplyDamage(damage);
             }
 
             // Eksekusi efek visual dan audio sebelum hancur
@@ -35,10 +43,10 @@ public class EnemyBullet : MonoBehaviour
             return; 
         }
         
-        // 2. Deteksi Rintangan Gabungan: Layer "Obstacles" (Punya Lu) ATAU Tag "Environment" (Punya Fikri)
+        // 2. Deteksi Rintangan Gabungan: Layer "Obstacles" ATAU Tag "Environment"
         if (hitInfo.gameObject.layer == LayerMask.NameToLayer("Obstacles") || hitInfo.CompareTag("Environment"))
         {
-            // Eksekusi efek visual dan audio sebelum hancur
+            // Eksekusi efek visual dan suara sebelum hancur
             PlayImpactEffects();
 
             Destroy(gameObject);
@@ -54,7 +62,7 @@ public class EnemyBullet : MonoBehaviour
             Instantiate(impactExplosionPrefab, transform.position, Quaternion.identity);
         }
 
-        // KOREKSI AUDIO: Mainkan suara ledakan secara mandiri agar tidak terputus saat peluru hancur
+        // Mainkan suara ledakan secara mandiri agar tidak terputus saat peluru hancur
         if (impactSoundClip != null)
         {
             AudioSource.PlayClipAtPoint(impactSoundClip, transform.position);
