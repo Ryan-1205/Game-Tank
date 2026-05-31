@@ -5106,6 +5106,8 @@ MonoBehaviour:
   maxSpawnRadius: 20
   mapCollider: {fileID: 400160046}
   bossPrefab: {fileID: 5461036874356811074, guid: ec2d88283ff784947a88b2438ebcdc30, type: 3}
+  currentStage: 1
+  difficultyMultiplier: 1.5
 --- !u!4 &2082173773
 Transform:
   m_ObjectHideFlags: 0

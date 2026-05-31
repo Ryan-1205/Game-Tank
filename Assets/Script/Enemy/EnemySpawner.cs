@@ -27,6 +27,10 @@ public class EnemySpawner : MonoBehaviour
     [Header("Boss Settings")]
     public GameObject bossPrefab;
 
+    [Header("3 Stage Settings")]
+    public int currentStage = 1; // Melacak stage saat ini (1 sampai 3)
+    public float difficultyMultiplier = 1.5f; // Pengali kesulitan per stage (1.5x lebih ramai/cepat)
+
     private int nextWave = 0;
     private bool isWaveActive = false;
 
@@ -38,25 +42,55 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator PlayGameRoutine()
     {
-        while (nextWave < waves.Length)
+        // Bungkus keseluruhan loop dengan sistem 3 Stage
+        while (currentStage <= 3)
         {
-            yield return StartCoroutine(RunWave(waves[nextWave]));
+            // === LOG CONSOLE: MASUK STAGE BARU ===
+            Debug.Log($"<color=#00FFFF><b>[STAGE SYSTEM]</b> ===================================</color>");
+            Debug.Log($"<color=#00FFFF><b>[STAGE SYSTEM]</b> >>> MEMASUKI STAGE {currentStage} <<<</color>");
+            Debug.Log($"<color=#00FFFF><b>[STAGE SYSTEM]</b> ===================================</color>");
             
-            nextWave++;
-            if (nextWave < waves.Length)
+            nextWave = 0; // Reset kembali ke Wave 1 tiap ganti stage
+
+            while (nextWave < waves.Length)
             {
-                Debug.Log("Wave Selesai! Menunggu " + timeBetweenWaves + " detik...");
+                yield return StartCoroutine(RunWave(waves[nextWave]));
+                
+                nextWave++;
+                if (nextWave < waves.Length)
+                {
+                    // === LOG CONSOLE: JEDA ANTAR WAVE ===
+                    Debug.Log($"<color=#FFA500><b>[WAVE TRANSITION]</b> {waves[nextWave - 1].waveName} Selesai! Menunggu {timeBetweenWaves} detik sebelum {waves[nextWave].waveName}...</color>");
+                    yield return new WaitForSeconds(timeBetweenWaves);
+                }
+            }
+
+            // Semua wave di stage ini selesai, panggil Boss dan TUNGGU sampai hancur
+            yield return StartCoroutine(SpawnBossRoutine());
+
+            // Boss hancur, naikkan stage
+            currentStage++;
+            if (currentStage <= 3)
+            {
+                // === LOG CONSOLE: STAGE CLEAR ===
+                Debug.Log($"<color=#00FF00><b>[STAGE CLEAR]</b> Boss Stage {currentStage - 1} Berhasil Dihancurkan! Bersiap menuju Stage {currentStage}...</color>");
                 yield return new WaitForSeconds(timeBetweenWaves);
             }
         }
 
-        // Semua wave selesai, panggil Boss
-        StartCoroutine(SpawnBossRoutine());
+        // === LOG CONSOLE: GAME TAMAT ===
+        Debug.Log("<color=#FFD700><b>[VICTORY]</b> SELAMAT! Anda telah menyelesaikan seluruh Stage (Game Selesai)!</color>");
     }
 
     IEnumerator RunWave(Wave _wave)
     {
-        Debug.Log("Memulai " + _wave.waveName + " | Durasi: " + _wave.duration + "s");
+        // Hitung batas musuh yang sudah dikalikan tingkat kesulitan stage saat ini
+        int finalMaxEnemies = Mathf.RoundToInt(_wave.maxEnemiesAtOnce * Mathf.Pow(difficultyMultiplier, currentStage - 1));
+        float finalSpawnRate = _wave.spawnRate / Mathf.Pow(difficultyMultiplier, currentStage - 1);
+
+        // === LOG CONSOLE: STARTING WAVE ===
+        Debug.Log($"<color=#FFFF00><b>[WAVE GERAK]</b> Memulai Stage {currentStage} - {_wave.waveName} | Durasi: {_wave.duration}s | Max Enemies: {finalMaxEnemies} | Spawn Rate: {finalSpawnRate:F2}s</color>");
+        
         float timer = _wave.duration;
         isWaveActive = true;
 
@@ -65,20 +99,25 @@ public class EnemySpawner : MonoBehaviour
             // Hitung jumlah musuh dengan tag "Enemy" saat ini
             int currentEnemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
-            // Jika belum mencapai batas maksimal wave ini, spawn musuh baru
-            if (currentEnemyCount < _wave.maxEnemiesAtOnce)
+            // Jika belum mencapai batas maksimal wave ini (yang sudah disesuaikan stage), spawn musuh baru
+            if (currentEnemyCount < finalMaxEnemies)
             {
                 SpawnEnemy(_wave.enemyPrefab);
-                // Kasih jeda dikit biar nggak langsung "meledak" spawn barengan
-                yield return new WaitForSeconds(_wave.spawnRate);
+                // Kasih jeda yang sudah disesuaikan dengan stage saat ini
+                yield return new WaitForSeconds(finalSpawnRate);
+                timer -= finalSpawnRate;
             }
-
-            timer -= Time.deltaTime;
-            yield return null; // Tunggu ke frame berikutnya
+            else
+            {
+                timer -= Time.deltaTime;
+                yield return null; // Tunggu ke frame berikutnya
+            }
         }
 
         isWaveActive = false;
-        Debug.Log(_wave.waveName + " Habis Waktunya!");
+        
+        // === LOG CONSOLE: WAVE SELESAI ===
+        Debug.Log($"<color=#FF3333><b>[WAVE END]</b> {_wave.waveName} di Stage {currentStage} Habis Waktunya!</color>");
     }
 
     void SpawnEnemy(GameObject _enemy)
@@ -95,7 +134,7 @@ public class EnemySpawner : MonoBehaviour
         {
             Bounds mapBounds = mapCollider.bounds;
 
-            // Paksa koordinat agar tidak melewati batas minimal dan maksimal collider
+            // Paksa koordinat agar tidak melewati batas minimal dan maximal collider
             float clampedX = Mathf.Clamp(spawnPos.x, mapBounds.min.x, mapBounds.max.x);
             float clampedY = Mathf.Clamp(spawnPos.y, mapBounds.min.y, mapBounds.max.y);
 
@@ -107,7 +146,8 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnBossRoutine()
     {
-        Debug.Log("Persiapan Boss...");
+        // === LOG CONSOLE: PERSIAPAN BOSS ===
+        Debug.Log($"<color=#FF0000><b>[BOSS WARNING]</b> Semua wave di Stage {currentStage} bersih! Mengunci pergerakan waktu, bersiap memanggil Boss...</color>");
         yield return new WaitForSeconds(3f);
         
         Vector2 randomDir = Random.insideUnitCircle.normalized;
@@ -122,7 +162,18 @@ public class EnemySpawner : MonoBehaviour
             spawnPos = new Vector3(clampedX, clampedY, 0f);
         }
 
-        Instantiate(bossPrefab, spawnPos, Quaternion.identity);
-        Debug.Log("BOSS MUNCUL!");
+        GameObject bossInstance = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+        
+        // === LOG CONSOLE: BOSS MUNCUL ===
+        Debug.Log($"<color=#FF0055><b>[BOSS SPAWNED]</b> BOSS STAGE {currentStage} MUNCUL DI ARENA!</color>");
+
+        // KUNCI UTAMA: Tahan game di sini selama Boss masih ada (belum di-Destroy)
+        while (bossInstance != null)
+        {
+            yield return null; 
+        }
+        
+        // === LOG CONSOLE: DETEKSI BOSS MATI ===
+        Debug.Log($"<color=#00FF88><b>[BOSS DEAD]</b> Sistem mendeteksi Boss Stage {currentStage} telah dihancurkan!</color>");
     }
 }
