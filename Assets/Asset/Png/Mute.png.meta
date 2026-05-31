@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: b559a4e44e7b0644c9d1f696ceb1a08e
+guid: b04c749087bbfae469ad567a4f7580e0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5966209299984780030
-    second: Tank_mini_0
+      213: 4840237254561571183
+    second: Mute_0
+  - first:
+      213: -679273813856026339
+    second: Mute_1
+  - first:
+      213: -6539317264221601900
+    second: Mute_2
+  - first:
+      213: 7029084649753759962
+    second: Mute_3
+  - first:
+      213: 8515896204109827898
+    second: Mute_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +87,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -139,13 +151,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tank_mini_0
+      name: Mute_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1139
-        height: 904
+        x: 44
+        y: 136
+        width: 248
+        height: 247
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +166,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: efa893d7fbb3cc250800000000000000
-      internalID: 5966209299984780030
+      spriteID: f6121ca632afb2340800000000000000
+      internalID: 4840237254561571183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mute_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 115
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1103e3b01cb296f0800000000000000
+      internalID: -679273813856026339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mute_2
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 0
+        width: 70
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49ffd70589daf35a0800000000000000
+      internalID: -6539317264221601900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mute_3
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 0
+        width: 58
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad059bc4f335c8160800000000000000
+      internalID: 7029084649753759962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mute_4
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 0
+        width: 70
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3f401e7a7a8e2670800000000000000
+      internalID: 8515896204109827898
       vertices: []
       indices: 
       edges: []
@@ -174,7 +274,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tank_mini_0: 5966209299984780030
+      Mute_0: 4840237254561571183
+      Mute_1: -679273813856026339
+      Mute_2: -6539317264221601900
+      Mute_3: 7029084649753759962
+      Mute_4: 8515896204109827898
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

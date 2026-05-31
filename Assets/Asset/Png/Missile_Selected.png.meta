@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b559a4e44e7b0644c9d1f696ceb1a08e
+guid: e57a14fdde7f15d4096e48960f075499
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5966209299984780030
-    second: Tank_mini_0
+      213: 427061954311703353
+    second: Missile_Selected_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tank_mini_0
+      name: Missile_Selected_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1139
-        height: 904
+        width: 260
+        height: 346
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: efa893d7fbb3cc250800000000000000
-      internalID: 5966209299984780030
+      spriteID: 93b45d3b59a3de500800000000000000
+      internalID: 427061954311703353
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tank_mini_0: 5966209299984780030
+      Missile_Selected_0: 427061954311703353
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

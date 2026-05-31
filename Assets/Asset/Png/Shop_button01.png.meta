@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b559a4e44e7b0644c9d1f696ceb1a08e
+guid: f4da47513d37f8946a5d0988c1ee02c9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5966209299984780030
-    second: Tank_mini_0
+      213: -2002463878865413452
+    second: Shop_button01_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,23 +139,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tank_mini_0
+      name: Shop_button01_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1139
-        height: 904
+        x: 55
+        y: 98
+        width: 192
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: efa893d7fbb3cc250800000000000000
-      internalID: 5966209299984780030
+      spriteID: 4ba1da036b1d534e0800000000000000
+      internalID: -2002463878865413452
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 06b94cd510befbd41a5212d1ca09d06b
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tank_mini_0: 5966209299984780030
+      Shop_button01_0: -2002463878865413452
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

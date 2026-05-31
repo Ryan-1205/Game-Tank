@@ -1,10 +1,25 @@
 fileFormatVersion: 2
-guid: b559a4e44e7b0644c9d1f696ceb1a08e
+guid: 7e7bed36e30eeb84d88859d1a68b8277
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5966209299984780030
-    second: Tank_mini_0
+      213: 7972770197630505558
+    second: Yes_Button_0
+  - first:
+      213: -8730689523666889174
+    second: Yes_Button_1
+  - first:
+      213: -5216958315329295071
+    second: Yes_Button_2
+  - first:
+      213: -4280984419155150137
+    second: Yes_Button_3
+  - first:
+      213: -8642497176437687542
+    second: Yes_Button_4
+  - first:
+      213: 7421844710941618466
+    second: Yes_Button_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +90,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -139,13 +154,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tank_mini_0
+      name: Yes_Button_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1139
-        height: 904
+        width: 386
+        height: 272
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +169,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: efa893d7fbb3cc250800000000000000
-      internalID: 5966209299984780030
+      spriteID: 6525691d048f4ae60800000000000000
+      internalID: 7972770197630505558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yes_Button_1
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 95
+        width: 42
+        height: 149
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a265c99a22c56d680800000000000000
+      internalID: -8730689523666889174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yes_Button_2
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 92
+        width: 343
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12de6c68d04a997b0800000000000000
+      internalID: -5216958315329295071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yes_Button_3
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 17
+        width: 32
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ca76473a53e694c0800000000000000
+      internalID: -4280984419155150137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yes_Button_4
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 48
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0b7d12ab9eaf0880800000000000000
+      internalID: -8642497176437687542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yes_Button_5
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 32
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22179c52170bff660800000000000000
+      internalID: 7421844710941618466
       vertices: []
       indices: 
       edges: []
@@ -174,7 +299,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tank_mini_0: 5966209299984780030
+      Yes_Button_0: 7972770197630505558
+      Yes_Button_1: -8730689523666889174
+      Yes_Button_2: -5216958315329295071
+      Yes_Button_3: -4280984419155150137
+      Yes_Button_4: -8642497176437687542
+      Yes_Button_5: 7421844710941618466
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

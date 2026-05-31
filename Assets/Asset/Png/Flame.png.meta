@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b559a4e44e7b0644c9d1f696ceb1a08e
+guid: ea7bbbfddf465304cbffc855f8b531f7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5966209299984780030
-    second: Tank_mini_0
+      213: 403208247147482157
+    second: Flame_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tank_mini_0
+      name: Flame_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1139
-        height: 904
+        width: 223
+        height: 297
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: efa893d7fbb3cc250800000000000000
-      internalID: 5966209299984780030
+      spriteID: d2ccbb5b3cb789500800000000000000
+      internalID: 403208247147482157
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tank_mini_0: 5966209299984780030
+      Flame_0: 403208247147482157
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
