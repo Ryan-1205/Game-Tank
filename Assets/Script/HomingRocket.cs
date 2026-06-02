@@ -31,7 +31,8 @@ public class HomingRocket : MonoBehaviour
         // BIKIN BUNYI PAS ROKET MELUNCUR
         if (shootSoundClip != null)
         {
-            AudioSource.PlayClipAtPoint(shootSoundClip, transform.position);
+            // Tambahkan , 0.5f di ujung kurung buat ngecilin suara meluncur
+            AudioSource.PlayClipAtPoint(shootSoundClip, transform.position, 0.5f);
         }
 
         FindClosestEnemy();
@@ -179,7 +180,8 @@ public class HomingRocket : MonoBehaviour
 
         if (impactSoundClip != null)
         {
-            AudioSource.PlayClipAtPoint(impactSoundClip, transform.position);
+            // Tambahkan , 0.6f di ujung kurung buat ngecilin suara ledakan
+            AudioSource.PlayClipAtPoint(impactSoundClip, transform.position, 0.6f);
         }
     }
 }

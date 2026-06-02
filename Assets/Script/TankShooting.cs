@@ -136,7 +136,8 @@ public class TankShooting : MonoBehaviour
         {
             if (sfxSource != null && sfxSource.clip != null)
             {
-                sfxSource.PlayOneShot(sfxSource.clip);
+                // Tambahkan , 0.5f di dalam kurung PlayOneShot buat ngecilin suaranya
+                sfxSource.PlayOneShot(sfxSource.clip, 0.5f);
             }
         }
     }
@@ -153,6 +154,7 @@ public class TankShooting : MonoBehaviour
             if (!sfxSource.isPlaying)
             {
                 sfxSource.clip = laserLoopClip;
+                sfxSource.volume = 0.2f;
                 sfxSource.Play();
             }
         }
@@ -196,6 +198,7 @@ public class TankShooting : MonoBehaviour
         {
             sfxSource.Stop();
             sfxSource.loop = false; 
+            sfxSource.volume = 0.5f;
         }
     }
 

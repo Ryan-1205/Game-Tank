@@ -70,7 +70,8 @@ public class RamboBurstBullet : MonoBehaviour
     {
         if (shootSoundClip != null)
         {
-            AudioSource.PlayClipAtPoint(shootSoundClip, transform.position);
+            // Tambahkan , 0.4f di ujung kurung buat ngecilin rentetan suara rambo
+            AudioSource.PlayClipAtPoint(shootSoundClip, transform.position, 0.4f);
         }
     }
 

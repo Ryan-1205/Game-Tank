@@ -20,7 +20,8 @@ public class PlasmaLaser : MonoBehaviour
         // BIKIN BUNYI PAS LASER KELUAR
         if (shootSoundClip != null)
         {
-            AudioSource.PlayClipAtPoint(shootSoundClip, transform.position);
+            // Tambahkan , 0.5f di ujung kurung buat ngecilin suara tembakan laser
+            AudioSource.PlayClipAtPoint(shootSoundClip, transform.position, 0.5f);
         }
 
         if (lineRenderer == null) lineRenderer = GetComponent<LineRenderer>();
@@ -66,7 +67,8 @@ public class PlasmaLaser : MonoBehaviour
             // Mainkan suara ledakan di titik tabrakan
             if (impactSoundClip != null)
             {
-                AudioSource.PlayClipAtPoint(impactSoundClip, hit.point);
+                // Tambahkan , 0.5f di ujung kurung buat ngecilin suara ledakannya
+                AudioSource.PlayClipAtPoint(impactSoundClip, hit.point, 0.5f);
             }
         }
 

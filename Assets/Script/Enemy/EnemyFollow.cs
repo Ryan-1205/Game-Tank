@@ -50,6 +50,7 @@ public class EnemyFollow : MonoBehaviour
             shootAudio = audioSources[1];
 
             engineAudio.loop = true;
+            engineAudio.volume = 0.3f;
             engineAudio.Play();
         }
     }
@@ -133,7 +134,8 @@ public class EnemyFollow : MonoBehaviour
             // 3. BUNYIKAN SUARA TEMBAKAN (Punya Fikri)
             if (shootAudio != null && shootAudio.clip != null)
             {
-                shootAudio.PlayOneShot(shootAudio.clip);
+                // Tambahkan , 0.4f di dalam kurung PlayOneShot buat ngecilin suaranya
+                shootAudio.PlayOneShot(shootAudio.clip, 0.4f);
             }
         }
     }
