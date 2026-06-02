@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 280d9894163c6bd40b86d323c2b78a40
+guid: 64ac2278abe376f44935b8b589ed2a9b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 155872574156909910
-    second: Gun_05 1_0
+      213: -5544665450184981665
+    second: Hull_04_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,11 +46,11 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 9
-  spritePivot: {x: 0.515283, y: 0.2173913}
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gun_05 1_0
+      name: Hull_04_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 76
-        height: 194
+        x: 70
+        y: 14
+        width: 116
+        height: 199
       alignment: 9
-      pivot: {x: 0.51761657, y: 0.20496891}
+      pivot: {x: 0.5038075, y: 0.37570703}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 65d29d4c745c92200800000000000000
-      internalID: 155872574156909910
+      spriteID: f53c75366246d03b0800000000000000
+      internalID: -5544665450184981665
       vertices: []
       indices: 
       edges: []
@@ -125,8 +125,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: a58febedab58c6842b357706982f1513
-    internalID: -732536325
+    spriteID: aa4d69a4f8a843b489eed649067136cd
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gun_05 1_0: 155872574156909910
+      Hull_04_0: -5544665450184981665
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

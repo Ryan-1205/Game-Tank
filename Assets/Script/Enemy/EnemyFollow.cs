@@ -35,23 +35,22 @@ public class EnemyFollow : MonoBehaviour
 
     void Start()
     {
-        GameObject playerObj = GameObject.Find("Player");
-        if (playerObj != null) player = playerObj.transform;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
-        // --- AMBIL AUDIO OTOMATIS (Punya Fikri) ---
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+
         audioSources = GetComponents<AudioSource>();
+
         if (audioSources.Length >= 2)
         {
-            engineAudio = audioSources[0]; // Audio Source pertama = mesin
-            shootAudio = audioSources[1];  // Audio Source kedua = tembakan
-            
-            // Hidupkan suara mesin diesel saat musuh spawn
+            engineAudio = audioSources[0];
+            shootAudio = audioSources[1];
+
             engineAudio.loop = true;
             engineAudio.Play();
-        }
-        else
-        {
-            Debug.LogWarning("Peringatan: " + gameObject.name + " butuh 2 Audio Source di Inspector agar suara mesin & tembakan berfungsi!");
         }
     }
 

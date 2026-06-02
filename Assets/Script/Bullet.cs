@@ -2,27 +2,26 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour 
 {
-    public int damage = 1; // Besaran damage peluru
+    public int damage = 1; 
 
     [Header("Visual Impact Effect")]
     public GameObject impactExplosionPrefab; 
 
-    // Slot untuk memasukkan file audio ledakan peluru player (.mp3/.wav)
     [Header("Audio Impact Effect")]
     public AudioClip impactSoundClip; 
 
     void Start() 
     {
-        // Otomatis hancur setelah 3 detik jika tidak kena apa-apa
         Destroy(gameObject, 3f);
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo) 
     {
-        // === CEK TARGET: Enemy atau Boss ===
+        // Abaikan jika mendeteksi badannya sendiri, tank player, atau sesama peluru
+        if (hitInfo.CompareTag("Player") || hitInfo.CompareTag("Bullet")) return;
+
         if (hitInfo.CompareTag("Enemy") || hitInfo.CompareTag("Boss")) 
         {
-            // PENCERIAN SMART 2D: Cari script Health di objek itu, atau di parent/children-nya
             Health enemyHealth = hitInfo.GetComponent<Health>();
             
             if (enemyHealth == null)
@@ -30,41 +29,42 @@ public class Bullet : MonoBehaviour
                 enemyHealth = hitInfo.GetComponentInParent<Health>();
             }
 
-            // Jika script Health ketemu, eksekusi pengurangan darah bawaan template
             if (enemyHealth != null)
             {
-                enemyHealth.ApplyDamage(damage); // Memicu event OnHealthChanged agar UI bar berkurang 
+                if (gameObject.name.ToLower().Contains("rocket") || gameObject.name.ToLower().Contains("misil"))
+                {
+                    enemyHealth.SetLastDamageType("rocket");
+                }
+                else
+                {
+                    enemyHealth.SetLastDamageType("normal");
+                }
+
+                enemyHealth.ApplyDamage(damage); 
             }
 
-            // Eksekusi efek visual dan suara sebelum peluru hancur
             PlayImpactEffects();
-
             Destroy(gameObject);
-            return; // Keluar dari fungsi agar tidak mengecek rintangan di bawah
+            return; 
         }
 
-        // 2. Jika menabrak rintangan peta (Layer "Obstacles")
-        if (hitInfo.gameObject.layer == LayerMask.NameToLayer("Obstacles"))
+        if (hitInfo.gameObject.layer == LayerMask.NameToLayer("Obstacles") || hitInfo.CompareTag("Wall"))
         {
-            // Eksekusi efek visual dan suara sebelum peluru hancur
             PlayImpactEffects();
-
             Destroy(gameObject);
         }
     }
 
-    // Fungsi pembantu eksekusi efek visual + audio
     void PlayImpactEffects()
     {
-        // Munculkan efek visual ledakan kecil lu
         if (impactExplosionPrefab != null)
         {
             Instantiate(impactExplosionPrefab, transform.position, Quaternion.identity);
         }
 
-        // Mainkan suara ledakan peluru player secara mandiri di posisi tabrakan
         if (impactSoundClip != null)
         {
+            // Menggunakan PlayClipAtPoint agar suara meledak muncul di koordinat posisi musuh hancur
             AudioSource.PlayClipAtPoint(impactSoundClip, transform.position);
         }
     }

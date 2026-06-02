@@ -7,20 +7,21 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public Transform turret; 
 
-    [Header("Shooting Settings")]
-    public GameObject bulletPrefab; // Tarik prefab peluru dari folder Project ke sini
-    public Transform firePoint;     // Objek kosong di ujung laras tank
-    public float bulletForce = 20f;
+    // KOREKSI LOGIKA: Pengaturan Shooting dihapus dari sini karena sudah dipindah 
+    // ke script TankShooting.cs di objek Turret agar tidak dobel nembak!
 
-    // Tempat memasukkan prefab cahaya di Inspector
-    public GameObject muzzleFlashPrefab; 
-
-    // === BARIS BARU: SISTEM EKONOMI SHOP ===
     [Header("Economy System")]
-    public int totalCoins = 0; // Tabungan koin awal player (bisa dipantau di Inspector)
+    public int totalCoins = 0; 
 
     Vector2 movement;
     Vector2 mousePos;
+
+    void Start()
+    {
+        // PERBAIKAN: Load data koin yang tersimpan di memori saat game dimulai
+        totalCoins = PlayerPrefs.GetInt("TotalKoin", 0);
+        Debug.Log("Koin berhasil di-load! Jumlah sekarang: " + totalCoins);
+    }
 
     void Update()
     {
@@ -30,16 +31,10 @@ public class PlayerController : MonoBehaviour
 
         // Ambil posisi mouse
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        // Deteksi klik kiri untuk nembak
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Shoot();
-        }
     }
 
     [Header("Smooth Settings")]
-    public float rotationSpeed = 10f; // Semakin besar, semakin cepat muternya
+    public float rotationSpeed = 10f; 
 
     void FixedUpdate()
     {
@@ -50,8 +45,6 @@ public class PlayerController : MonoBehaviour
         if (movement != Vector2.zero)
         {
             float targetAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
-            
-            // Menggunakan LerpAngle supaya transisinya halus dan tidak patah-patah
             float smoothAngle = Mathf.LerpAngle(rb.rotation, targetAngle, rotationSpeed * Time.fixedDeltaTime);
             rb.rotation = smoothAngle;
         }
@@ -59,43 +52,18 @@ public class PlayerController : MonoBehaviour
         // 3. Rotasi TURRET mengikuti Mouse
         Vector2 lookDir = mousePos - rb.position;
         float turretAngle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
-        
-        // Tips: Turret juga bisa di-lerp kalau mau terasa lebih realistis beratnya
         turret.rotation = Quaternion.Euler(0, 0, turretAngle);
     }
 
-    void Shoot()
-    {
-        // 1. Buat peluru di posisi dan rotasi FirePoint
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        
-        // 2. Ambil Rigidbody2D peluru
-        Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-        
-        // 3. Dorong peluru ke depan
-        bulletRb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
-
-        // --- LOGIKA MEMUNCULKAN CAHAYA ---
-        if (muzzleFlashPrefab != null)
-        {
-            // Munculkan objek cahaya tepat di posisi firePoint
-            GameObject flash = Instantiate(muzzleFlashPrefab, firePoint.position, firePoint.rotation);
-            
-            // Tempelkan objek cahaya sebagai anak dari firePoint agar ikut bergerak
-            flash.transform.SetParent(firePoint);
-
-            // Hancurkan objek cahaya setelah 0.1 detik (kilatan cepat)
-            Destroy(flash, 0.1f);
-        }
-    }
-
-    // === FUNCTION BARU: MENAMBAH KOIN KE DOMPET ===
-    // Fungsi ini bakal dipanggil oleh script CoinItem.cs pas koin ketabrak tank player
+    // === FUNCTION: MENAMBAH KOIN KE DOMPET (PERMANEN) ===
     public void AddCoins(int amount)
     {
         totalCoins += amount;
-        Debug.Log($"<color=#FFD700><b>[WALLET]</b> Koin Bertambah! +{amount} | Total Dompet: {totalCoins} Koin</color>");
-        
-        // Nanti di sini tempat kita buat nge-update teks koin di UI Canvas UI lo
+
+        // PERBAIKAN: Kunci koin ke memori lokal laptop biar gak hilang saat pindah scene
+        PlayerPrefs.SetInt("TotalKoin", totalCoins);
+        PlayerPrefs.Save();
+
+        Debug.Log($"<color=#FFD700><b>[WALLET]</b> Koin Tersimpan! +{amount} | Total di Memori: {totalCoins} Koin</color>");
     }
 }

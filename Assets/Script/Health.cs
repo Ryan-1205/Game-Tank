@@ -1,34 +1,35 @@
 using UnityEngine;
-using Ilumisoft.HealthSystem; // WAJIB: Biar bisa tersambung ke sistem UI aset template
+using Ilumisoft.HealthSystem; 
 
-public class Health : HealthComponent // KOREKSI: Sekarang mewarisi class bawaan aset
+public class Health : HealthComponent 
 {
     [Header("Base Health Settings (Aset Template)")]
     [SerializeField] private float maxHealth = 3.0f;
     [SerializeField, Range(0, 1)] private float initialRatio = 1.0f;
 
-    // Override properti wajib bawaan Ilumisoft Health System
     public override float MaxHealth { get => maxHealth; set => maxHealth = value; }
     public override float CurrentHealth { get; set; } = 0.0f;
     public override bool IsAlive => CurrentHealth > 0.0f;
 
-    [Header("Death Visual Effect (Punya Lu)")]
+    [Header("Death Visual Effect")]
     public GameObject deathExplosionPrefab; 
 
-    [Header("Death Audio Effect (Punya Lu)")]
-    public AudioClip deathSoundClip;
+    [Header("Death Audio Effects (3 Variasi)")]
+    public AudioClip normalExplosionSound; 
+    public AudioClip laserExplosionSound;  
+    public AudioClip rocketExplosionSound; 
 
-    [Header("Loot Settings (Sistem Belanja Lu)")]
+    private string lastDamageType = "normal";
+
+    [Header("Loot Settings")]
     public GameObject coinPrefab; 
     [Range(0, 100)] public float dropChance = 100f; 
 
     private void Awake()
     {
-        // Set darah awal sesuai dengan rasio di Inspector template
         SetHealth(MaxHealth * initialRatio);
     }
 
-    // Fungsi bawaan template untuk mengatur nilai darah secara presisi
     public override void SetHealth(float health)
     {
         float previousHealth = CurrentHealth;
@@ -37,11 +38,10 @@ public class Health : HealthComponent // KOREKSI: Sekarang mewarisi class bawaan
 
         if (Mathf.Abs(difference) > 0.0f)
         {
-            OnHealthChanged?.Invoke(difference); // Mengirim sinyal data ke UI Health Bar
+            OnHealthChanged?.Invoke(difference); 
         }
     }
 
-    // Fungsi bawaan template untuk menambah darah (Medkit/Heal)
     public override void AddHealth(float amount)
     {
         if (!IsAlive) return;
@@ -52,11 +52,11 @@ public class Health : HealthComponent // KOREKSI: Sekarang mewarisi class bawaan
 
         if (changeAmount > 0.0f)
         {
-            OnHealthChanged?.Invoke(changeAmount); // Update grafik Health Bar ke kanan
+            OnHealthChanged?.Invoke(changeAmount); 
         }
     }
 
-    // === KOREKSI UTAMA: Pengganti Fungsi TakeDamage Lama ===
+    // KOREKSI: Semua peluru wajib lewat sini agar dibaca oleh sistem Ilumisoft
     public override void ApplyDamage(float damage)
     {
         if (!IsAlive) return;
@@ -69,17 +69,22 @@ public class Health : HealthComponent // KOREKSI: Sekarang mewarisi class bawaan
 
         if (Mathf.Abs(changeAmount) > 0.0f)
         {
-            OnHealthChanged?.Invoke(changeAmount); // Sinyal agar UI Health Bar berkurang berkala
+            OnHealthChanged?.Invoke(changeAmount); 
 
             if (CurrentHealth <= 0.0f)
             {
-                Die(); // Panggil fungsi meledak dan drop coin milik lo
-                OnHealthEmpty?.Invoke(); // Sinyal tambahan opsional untuk sistem aset
+                Die(); 
+                OnHealthEmpty?.Invoke(); 
             }
         }
     }
 
-    // Fungsi kematian milik lo tetap dipertahankan seutuhnya
+    // Fungsi pembantu agar Bullet bisa ngasih tahu jenis senjatanya secara manual
+    public void SetLastDamageType(string type)
+    {
+        lastDamageType = type.ToLower();
+    }
+
     void Die()
     {
         if (deathExplosionPrefab != null)
@@ -87,9 +92,20 @@ public class Health : HealthComponent // KOREKSI: Sekarang mewarisi class bawaan
             Instantiate(deathExplosionPrefab, transform.position, Quaternion.identity);
         }
 
-        if (deathSoundClip != null)
+        AudioClip clipToPlay = normalExplosionSound; 
+
+        if (lastDamageType == "laser")
         {
-            AudioSource.PlayClipAtPoint(deathSoundClip, transform.position);
+            clipToPlay = laserExplosionSound;
+        }
+        else if (lastDamageType == "rocket" || lastDamageType == "misil")
+        {
+            clipToPlay = rocketExplosionSound;
+        }
+
+        if (clipToPlay != null)
+        {
+            AudioSource.PlayClipAtPoint(clipToPlay, transform.position);
         }
 
         if (gameObject.CompareTag("Enemy") || gameObject.CompareTag("Boss"))
