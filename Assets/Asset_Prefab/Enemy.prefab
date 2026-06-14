@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4168667555430985064}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: EnemyFirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6172621552315624169}
   - component: {fileID: 1300669924609725820}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5354253591558067977}
   - component: {fileID: 7464199063929524687}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 1525918786342814866}
   - component: {fileID: 5505322597784609680}
   - component: {fileID: -5294700166349680236}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -369,7 +369,9 @@ MonoBehaviour:
   maxHealth: 3
   initialRatio: 1
   deathExplosionPrefab: {fileID: 7447569067106369559, guid: 379968b4b9be86942839f95c9230e8f3, type: 3}
-  deathSoundClip: {fileID: 0}
+  normalExplosionSound: {fileID: 8300000, guid: 09fd86718dde28c44985a9720508671e, type: 3}
+  laserExplosionSound: {fileID: 8300000, guid: 17c01929301752045b7e43c88acffb33, type: 3}
+  rocketExplosionSound: {fileID: 8300000, guid: 94bc1a01c2f61cb4ca5013cd6673f28b, type: 3}
   coinPrefab: {fileID: 2328652593923856779, guid: 13f852dc83e8f594a9bebadcded38725, type: 3}
   dropChance: 100
 --- !u!82 &5505322597784609680
@@ -633,6 +635,22 @@ PrefabInstance:
     - target: {fileID: 5316046413323435999, guid: 351baf954590df348a71254a311227b1, type: 3}
       propertyPath: m_Name
       value: Healthbar
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316046413323435999, guid: 351baf954590df348a71254a311227b1, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316046413514025809, guid: 351baf954590df348a71254a311227b1, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316046414844214688, guid: 351baf954590df348a71254a311227b1, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316046414947681711, guid: 351baf954590df348a71254a311227b1, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

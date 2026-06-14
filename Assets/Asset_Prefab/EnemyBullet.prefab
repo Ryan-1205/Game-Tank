@@ -171,3 +171,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBullet
   damage: 1
   impactExplosionPrefab: {fileID: 6000871978278344180, guid: aa7906cd903bee9449860baa245a1e3b, type: 3}
+  impactSoundClip: {fileID: 0}

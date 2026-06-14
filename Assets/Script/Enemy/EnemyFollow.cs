@@ -15,43 +15,40 @@ public class EnemyFollow : MonoBehaviour
     public float fireRate = 2f;          
     private float nextFireTime;          
 
-    // Tempat memasukkan prefab cahaya di Inspector musuh (Punya Lu)
     public GameObject muzzleFlashPrefab; 
 
     [Header("AI Obstacle Avoidance")]
-    public LayerMask obstacleLayer;      // Pilih Layer "Obstacles" di Inspector
-    public float detectionDistance = 2f; // Jarak sensor mendeteksi batu
-    public float avoidanceForce = 2f;    // Seberapa tajam musuh membelok menghindari batu
+    public LayerMask obstacleLayer;      
+    public float detectionDistance = 2f; 
+    public float avoidanceForce = 2f;    
 
-    // --- INTEGRASI AUDIO GABUNGAN (Punya Fikri) ---
     [Header("Audio Settings (NPC)")]
-    public float minEnginePitch = 0.7f;  // Nada mesin terendah
-    public float maxEnginePitch = 1.2f;  // Nada mesin tertinggi
-    private AudioSource[] audioSources;  // Array penampung komponen
-    private AudioSource engineAudio;     // Slot suara mesin (Audio Source 1)
-    private AudioSource shootAudio;      // Slot suara tembak (Audio Source 2)
+    public float minEnginePitch = 0.7f;  
+    public float maxEnginePitch = 1.2f;  
+    private AudioSource[] audioSources;  
+    private AudioSource engineAudio;     
+    private AudioSource shootAudio;      
 
     private Transform player;
 
     void Start()
     {
-        GameObject playerObj = GameObject.Find("Player");
-        if (playerObj != null) player = playerObj.transform;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
 
-        // --- AMBIL AUDIO OTOMATIS (Punya Fikri) ---
         audioSources = GetComponents<AudioSource>();
+
         if (audioSources.Length >= 2)
         {
-            engineAudio = audioSources[0]; // Audio Source pertama = mesin
-            shootAudio = audioSources[1];  // Audio Source kedua = tembakan
-            
-            // Hidupkan suara mesin diesel saat musuh spawn
+            engineAudio = audioSources[0];
+            shootAudio = audioSources[1];
+
             engineAudio.loop = true;
+            engineAudio.volume = 0.3f;
             engineAudio.Play();
-        }
-        else
-        {
-            Debug.LogWarning("Peringatan: " + gameObject.name + " butuh 2 Audio Source di Inspector agar suara mesin & tembakan berfungsi!");
         }
     }
 
@@ -59,7 +56,7 @@ public class EnemyFollow : MonoBehaviour
     {
         if (player != null)
         {
-            // 1. Hitung arah dasar langsung menuju player
+            // 1. Hitung arah dasar menuju player
             Vector2 targetDirection = (player.position - transform.position).normalized;
             Vector2 finalMoveDirection = targetDirection;
 
@@ -74,7 +71,7 @@ public class EnemyFollow : MonoBehaviour
                 finalMoveDirection = (targetDirection + avoidanceDirection * avoidanceForce).normalized;
             }
 
-            // --- 2. JALANKAN PERGERAKAN BADAN ---
+            // 2. Jalankan pergerakan badan
             transform.position = Vector2.MoveTowards(transform.position, (Vector2)transform.position + finalMoveDirection, speed * Time.deltaTime);
 
             if (bodyTransform != null)
@@ -84,14 +81,13 @@ public class EnemyFollow : MonoBehaviour
                 bodyTransform.rotation = Quaternion.RotateTowards(bodyTransform.rotation, targetBodyRotation, bodyRotationSpeed * Time.deltaTime);
             }
 
-            // --- INTEGRASI AUDIO MESIN DINAMIS (Punya Fikri) ---
-            // Suara mesin bakal ngegas/berubah pitch secara acak halus biar kerasa hidup
+            // 3. Integrasi Audio Mesin Dinamis
             if (engineAudio != null)
             {
                 engineAudio.pitch = Mathf.MoveTowards(engineAudio.pitch, Random.Range(minEnginePitch, maxEnginePitch), Time.deltaTime * 0.5f);
             }
 
-            // --- 3. LOGIKA MEMBIDIK (TURET TETAP LOCK PLAYER) ---
+            // 4. Logika Membidik (Turret)
             if (turretTransform != null)
             {
                 Vector2 turretDir = (player.position - turretTransform.position).normalized;
@@ -99,7 +95,7 @@ public class EnemyFollow : MonoBehaviour
                 turretTransform.rotation = Quaternion.Euler(0, 0, turretAngle);
             }
 
-            // --- 4. LOGIKA MENEMBAK ---
+            // 5. Logika Menembak
             if (Time.time >= nextFireTime)
             {
                 Shoot();
@@ -112,7 +108,6 @@ public class EnemyFollow : MonoBehaviour
     {
         if (firePoint != null && enemyBulletPrefab != null)
         {
-            // 1. Munculkan peluru musuh
             GameObject bullet = Instantiate(enemyBulletPrefab, firePoint.position, firePoint.rotation);
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
             if (rb != null)
@@ -120,7 +115,7 @@ public class EnemyFollow : MonoBehaviour
                 rb.AddForce(firePoint.up * 10f, ForceMode2D.Impulse);
             }
 
-            // 2. MUNCULKAN VISUAL EFEK CAHAYA (Punya Lu)
+            // MUNCULKAN VISUAL EFEK CAHAYA
             if (muzzleFlashPrefab != null)
             {
                 Vector2 forwardDirection = firePoint.up;
@@ -131,10 +126,10 @@ public class EnemyFollow : MonoBehaviour
                 Destroy(flash, 0.1f);
             }
 
-            // 3. BUNYIKAN SUARA TEMBAKAN (Punya Fikri)
+            // BUNYIKAN SUARA TEMBAKAN (Volume dikecilkan 0.4f)
             if (shootAudio != null && shootAudio.clip != null)
             {
-                shootAudio.PlayOneShot(shootAudio.clip);
+                shootAudio.PlayOneShot(shootAudio.clip, 0.4f);
             }
         }
     }

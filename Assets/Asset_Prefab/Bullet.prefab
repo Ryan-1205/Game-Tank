@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 204125664581444413}
   - component: {fileID: 1062016418592003673}
   - component: {fileID: 7217238367150419133}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Bullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -171,3 +171,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   damage: 1
   impactExplosionPrefab: {fileID: 6000871978278344180, guid: aa7906cd903bee9449860baa245a1e3b, type: 3}
+  impactSoundClip: {fileID: 8300000, guid: 09fd86718dde28c44985a9720508671e, type: 3}

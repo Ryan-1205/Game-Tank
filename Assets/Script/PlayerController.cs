@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public Transform turret; 
 
+<<<<<<< HEAD
     [Header("Shooting Settings")]
     public GameObject bulletPrefab; 
     public Transform firePoint;     
@@ -24,10 +25,18 @@ public class PlayerController : MonoBehaviour
     [Header("Input Actions Reference")]
     public InputAction moveAction;
     public InputAction shootAction;
+=======
+    // KOREKSI LOGIKA: Pengaturan Shooting dihapus dari sini karena sudah dipindah 
+    // ke script TankShooting.cs di objek Turret agar tidak dobel nembak!
+
+    [Header("Economy System")]
+    public int totalCoins = 0; 
+>>>>>>> d9cc3c1e9fba9a5da219ea1b8d80fb5d7e7e06b6
 
     Vector2 movement;
     Vector2 mousePos;
 
+<<<<<<< HEAD
     private void OnEnable()
     {
         // Mengaktifkan input action saat objek aktif
@@ -40,6 +49,13 @@ public class PlayerController : MonoBehaviour
         // Mematikan input action saat objek tidak aktif (mencegah memory leak)
         moveAction.Disable();
         shootAction.Disable();
+=======
+    void Start()
+    {
+        // PERBAIKAN: Load data koin yang tersimpan di memori saat game dimulai
+        totalCoins = PlayerPrefs.GetInt("TotalKoin", 0);
+        Debug.Log("Koin berhasil di-load! Jumlah sekarang: " + totalCoins);
+>>>>>>> d9cc3c1e9fba9a5da219ea1b8d80fb5d7e7e06b6
     }
 
     void Update()
@@ -48,6 +64,7 @@ public class PlayerController : MonoBehaviour
         // Membaca input hardware (WASD / Analog) menggunakan package baru
         movement = moveAction.ReadValue<Vector2>();
 
+<<<<<<< HEAD
         // 2. MEMBACA POSISI MOUSE
         // Menggunakan Pointer bawaan Input System baru untuk akurasi koordinat layar
         if (Pointer.current != null)
@@ -87,6 +104,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+=======
+        // Ambil posisi mouse
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    [Header("Smooth Settings")]
+    public float rotationSpeed = 10f; 
+
+>>>>>>> d9cc3c1e9fba9a5da219ea1b8d80fb5d7e7e06b6
     void FixedUpdate()
     {
         // Gerak badan tank (Menggunakan hasil olahan Input System baru)
@@ -106,6 +132,7 @@ public class PlayerController : MonoBehaviour
         turret.rotation = Quaternion.Euler(0, 0, turretAngle);
     }
 
+<<<<<<< HEAD
     void Shoot()
     {
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
@@ -124,5 +151,17 @@ public class PlayerController : MonoBehaviour
     {
         totalCoins += amount;
         Debug.Log($"<color=#FFD700><b>[WALLET]</b> Koin Bertambah! +{amount} | Total Dompet: {totalCoins} Koin</color>");
+=======
+    // === FUNCTION: MENAMBAH KOIN KE DOMPET (PERMANEN) ===
+    public void AddCoins(int amount)
+    {
+        totalCoins += amount;
+
+        // PERBAIKAN: Kunci koin ke memori lokal laptop biar gak hilang saat pindah scene
+        PlayerPrefs.SetInt("TotalKoin", totalCoins);
+        PlayerPrefs.Save();
+
+        Debug.Log($"<color=#FFD700><b>[WALLET]</b> Koin Tersimpan! +{amount} | Total di Memori: {totalCoins} Koin</color>");
+>>>>>>> d9cc3c1e9fba9a5da219ea1b8d80fb5d7e7e06b6
     }
 }
