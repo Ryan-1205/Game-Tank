@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class CoinItem : MonoBehaviour
 {
+    // Slot untuk memasukkan file audio (.mp3 / .wav) koin di Inspector Prefab
+    public AudioClip suaraKoinCling;
+
     public int coinValue = 100; // Jumlah duit yang didapat per koin
 
     void Start()
@@ -21,7 +24,11 @@ public class CoinItem : MonoBehaviour
             {
                 player.AddCoins(coinValue);
                 
-                // Efek suara atau partikel bisa ditaruh di sini nanti
+                // KOREKSI: Mainkan suara koin tepat di posisi koin berada sebelum objeknya hancur
+                if (suaraKoinCling != null)
+                {
+                    AudioSource.PlayClipAtPoint(suaraKoinCling, transform.position);
+                }
                 
                 Destroy(gameObject); // Hancurkan objek koin dari map
             }
