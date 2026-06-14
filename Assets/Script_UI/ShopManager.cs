@@ -5,26 +5,31 @@ using TMPro;
 public class ShopManager : MonoBehaviour
 {
     [Header("UI & Koin")]
-    public TextMeshProUGUI coinText;         
-    public Image tankDisplayImage;    
+    public TextMeshProUGUI coinText;
+    public Image tankDisplayImage;
 
     [Header("Kontrol Tombol Eksekusi Tank (Hierarchy)")]
-    public GameObject btnBuyTank;      // Drag game object Btn_BuyTank dari Hierarchy ke sini
-    public GameObject btnUseTank;      // Drag game object Btn_UseTank dari Hierarchy ke sini
+    public GameObject btnBuyTank;
+    public GameObject btnUseTank;
 
-    [Header("Aset Gambar Tombol Harga (Photoshop)")]
-    public Sprite[] tombolHargaSprites; // Size = 3. Isi berurutan: sprite tombol "99", tombol "300", tombol "500"
-    public Sprite tombolUseSprite;      // Masukkan sprite gambar tombol "USE" (Warna hijau)
-    public Sprite tombolUsedSprite;     // Masukkan sprite gambar tombol "USED" (Jika ada, atau samakan dengan USE)
+    [Header("Aset Gambar Tombol (Photoshop)")]
+    public Sprite[] tombolHargaSprites;   // Masukin array gambar harga tank (Tank 0, 1, 2)
+    public Sprite tombolUseSprite;          // MASUKIN GAMBAR: Grafis tulisan "USE" (Udah beli tapi belum dipake)
+    public Sprite tombolUsedSprite;         // MASUKIN GAMBAR: Grafis tulisan "USED" / "SELECTED" (Lagi dipake)
+
+    [Header("Gambar Dasar Senjata Before Dibeli")]
+    public Sprite normalSpritePlasma;     // MASUKIN GAMBAR: Tombol dasar Plasma Laser asli lu
+    public Sprite normalSpriteRoket;      // MASUKIN GAMBAR: Tombol dasar Homing Rocket asli lu
+    public Sprite normalSpriteRambo;      // MASUKIN GAMBAR: Tombol dasar Rambo Burst asli lu
 
     [Header("Harga & Prefab Tank")]
-    public GameObject[] tankPrefabs;  // Masukkan daftar prefab tank 1-3
-    public Sprite[] tankSprites;      // Masukkan sprite visual tank 1-3 buat di menu
-    public int[] hargaTank = { 0, 300, 500 }; 
+    public GameObject[] tankPrefabs;
+    public Sprite[] tankSprites;
+    public int[] hargaTank = { 0, 300, 500 };
 
     [Header("UI Pop-Up Tank (Panel_Notif)")]
-    public GameObject panelNotifTank;       // Drag game object Panel_Notif ke sini
-    public TextMeshProUGUI teksNotifTank;   // Drag teks harga/konfirmasi di dalam Panel_Notif
+    public GameObject panelNotifTank;
+    public TextMeshProUGUI teksNotifTank;
 
     [Header("Harga Senjata")]
     public int hargaPlasma = 50;
@@ -32,45 +37,67 @@ public class ShopManager : MonoBehaviour
     public int hargaRambo = 150;
 
     [Header("UI Pop-Up Peluru (Panel_Notif_Peluru)")]
-    public GameObject panelNotifPeluru;     // Drag game object Panel_Notif_Peluru ke sini
-    public TextMeshProUGUI teksNotifPeluru; // Drag teks harga/konfirmasi di dalam Panel_Notif_Peluru
+    public GameObject panelNotifPeluru;
+    public TextMeshProUGUI teksNotifPeluru;
+
+    [Header("KOMPONEN SENJATA (DYNAMIC TEXT)")]
+    public TextMeshProUGUI teksTombolPlasma; // Tarik objek Text (TMP) dari dalam Btn_Senjata1
+    public TextMeshProUGUI teksTombolRoket;  // Tarik objek Text (TMP) dari dalam Btn_Senjata2
+    public TextMeshProUGUI teksTombolRambo;  // Tarik objek Text (TMP) dari dalam Btn_Senjata3
+
+    [Header("KOMPONEN SENJATA (GRAPHIC PHOTOSHOP)")]
+    public Image imgTombolPlasma; // Tarik Btn_Senjata1 ke sini
+    public Image imgTombolRoket;  // Tarik Btn_Senjata2 ke sini
+    public Image imgTombolRambo;  // Tarik Btn_Senjata3 ke sini
 
     private int TotalKoin;
-    private int idTankDipilih = 0; 
-    
-    // Variabel penampung internal buat proses konfirmasi
+    private int idTankDipilih = 0;
+
     private int idSenjataDipilihSementara = -1;
     private int hargaSenjataSementara = 0;
 
-    void Start()
+    // FUNGSI BAWAAN UNITY: Otomatis jalan setiap kali Panel Toko diaktifkan/dibuka kembali
+    void OnEnable()
     {
         TotalKoin = PlayerPrefs.GetInt("TotalKoin", 0);
         idTankDipilih = PlayerPrefs.GetInt("SelectedTank", 0);
 
-        // Pastikan kedua panel pop-up tertutup saat game mulai
+        UpdateCoinUI();
+        UpdateTankShopDisplay();
+        UpdateWeaponShopVisual(); // Paksa visual senjata nge-refresh pas toko dibuka kembali
+    }
+
+    void Start()
+    {
         if (panelNotifTank != null) panelNotifTank.SetActive(false);
         if (panelNotifPeluru != null) panelNotifPeluru.SetActive(false);
 
+        TotalKoin = PlayerPrefs.GetInt("TotalKoin", 0);
+        idTankDipilih = PlayerPrefs.GetInt("SelectedTank", 0);
+
         UpdateCoinUI();
         UpdateTankShopDisplay();
+        UpdateWeaponShopVisual();
     }
 
     // ==========================================
-    // LOGIKA TOMBOL GESER & POP-UP TANK
+    // LOGIKA TANK
     // ==========================================
 
     public void TombolTankNext()
     {
         idTankDipilih++;
-        if (idTankDipilih >= tankSprites.Length) idTankDipilih = 0; 
+        if (idTankDipilih >= tankSprites.Length) idTankDipilih = 0;
         UpdateTankShopDisplay();
+        UpdateWeaponShopVisual(); // Biar peluru ga ke-reset visualnya pas mindah tank
     }
 
     public void TombolTankPrev()
     {
         idTankDipilih--;
-        if (idTankDipilih < 0) idTankDipilih = tankSprites.Length - 1; 
+        if (idTankDipilih < 0) idTankDipilih = tankSprites.Length - 1;
         UpdateTankShopDisplay();
+        UpdateWeaponShopVisual(); // Biar peluru ga ke-reset visualnya pas mindah tank
     }
 
     public void TombolEksekusiTank()
@@ -78,26 +105,10 @@ public class ShopManager : MonoBehaviour
         string statusKey = "TankDimiliki_" + idTankDipilih;
         bool sudahPunya = (idTankDipilih == 0) || (PlayerPrefs.GetInt(statusKey, 0) == 1);
 
-        if (sudahPunya)
-        {
-            // Jika sudah punya, langsung pakai tanpa pop-up
-            AktivasiTank();
-        }
-        else
-        {
-            // Jika belum punya, buka Panel_Notif (Pop-up Tank)
-            if (panelNotifTank != null)
-            {
-                panelNotifTank.SetActive(true);
-                if (teksNotifTank != null)
-                {
-                    teksNotifTank.text = $"{hargaTank[idTankDipilih]}";
-                }
-            }
-        }
+        if (sudahPunya) { AktivasiTank(); }
+        else if (panelNotifTank != null) { panelNotifTank.SetActive(true); if (teksNotifTank != null) teksNotifTank.text = $"{hargaTank[idTankDipilih]}"; }
     }
 
-    // Dipanggil saat menekan tombol YES di Panel_Notif (Pop-up Tank)
     public void TombolTankYes()
     {
         int harga = hargaTank[idTankDipilih];
@@ -105,118 +116,75 @@ public class ShopManager : MonoBehaviour
         {
             TotalKoin -= harga;
             PlayerPrefs.SetInt("TotalKoin", TotalKoin);
-            
-            string statusKey = "TankDimiliki_" + idTankDipilih;
-            PlayerPrefs.SetInt(statusKey, 1); // Tandai tank sudah dibeli
-            
+            PlayerPrefs.SetInt("TankDimiliki_" + idTankDipilih, 1);
             AktivasiTank();
             UpdateCoinUI();
-            Debug.Log($"[Shop] Sukses beli Tank indeks ke-{idTankDipilih}!");
         }
-        else
-        {
-            Debug.LogWarning("[Shop] Koin tidak cukup untuk beli tank!");
-        }
-
-        TombolTankNo(); // Tutup panel setelah eksekusi
+        TombolTankNo();
     }
 
-    // Dipanggil saat menekan tombol NO di Panel_Notif (Pop-up Tank)
-    public void TombolTankNo()
-    {
-        if (panelNotifTank != null) panelNotifTank.SetActive(false);
-    }
+    public void TombolTankNo() { if (panelNotifTank != null) panelNotifTank.SetActive(false); }
 
     void AktivasiTank()
     {
         PlayerPrefs.SetInt("SelectedTank", idTankDipilih);
-        
-        // Peluru default balik ke Bullet biasa (0) saat ganti tank
-        PlayerPrefs.SetInt("ActiveWeapon", 0);
         PlayerPrefs.Save();
-        
         if (WeaponManager.Instance != null) WeaponManager.Instance.LoadWeapon();
-        
         UpdateTankShopDisplay();
+        UpdateWeaponShopVisual(); // Refresh visual senjata setelah tank berhasil dipakai/dibeli
     }
 
-    // KOREKSI UTAMA: Mengatur nyala-mati dua tombol & mengganti sprite tombol harga secara dinamis
     void UpdateTankShopDisplay()
     {
-        if (tankDisplayImage != null && tankSprites.Length > idTankDipilih)
-        {
-            tankDisplayImage.sprite = tankSprites[idTankDipilih];
-        }
+        if (tankDisplayImage != null && tankSprites.Length > idTankDipilih) tankDisplayImage.sprite = tankSprites[idTankDipilih];
 
         string statusKey = "TankDimiliki_" + idTankDipilih;
         bool sudahPunya = (idTankDipilih == 0) || (PlayerPrefs.GetInt(statusKey, 0) == 1);
 
         if (sudahPunya)
         {
-            // 1. KONDISI SUDAH PUNYA: Aktifkan Btn_UseTank, Matikan Btn_BuyTank
             if (btnBuyTank != null) btnBuyTank.SetActive(false);
             if (btnUseTank != null) btnUseTank.SetActive(true);
-
-            // Atur gambar Use atau Used pada Btn_UseTank
             Image imgUse = btnUseTank.GetComponent<Image>();
-            if (imgUse != null)
-            {
-                int tankAktif = PlayerPrefs.GetInt("SelectedTank", 0);
-                if (tankAktif == idTankDipilih)
-                {
-                    if (tombolUsedSprite != null) imgUse.sprite = tombolUsedSprite;
-                }
-                else
-                {
-                    if (tombolUseSprite != null) imgUse.sprite = tombolUseSprite;
-                }
-            }
+            if (imgUse != null) imgUse.sprite = (PlayerPrefs.GetInt("SelectedTank", 0) == idTankDipilih && tombolUsedSprite != null) ? tombolUsedSprite : tombolUseSprite;
         }
         else
         {
-            // 2. KONDISI BELUM PUNYA: Aktifkan Btn_BuyTank, Matikan Btn_UseTank
             if (btnBuyTank != null) btnBuyTank.SetActive(true);
             if (btnUseTank != null) btnUseTank.SetActive(false);
-
-            // Ganti sprite Btn_BuyTank secara otomatis sesuai indeks (99, 300, atau 500)
             Image imgBuy = btnBuyTank.GetComponent<Image>();
-            if (imgBuy != null && tombolHargaSprites != null && tombolHargaSprites.Length > idTankDipilih)
-            {
-                imgBuy.sprite = tombolHargaSprites[idTankDipilih];
-            }
+            if (imgBuy != null && tombolHargaSprites != null && tombolHargaSprites.Length > idTankDipilih) imgBuy.sprite = tombolHargaSprites[idTankDipilih];
         }
     }
 
     // ==========================================
-    // LOGIKA TOMBOL & POP-UP PELURU
+    // LOGIKA PELURU / SENJATA
     // ==========================================
 
-    public void BeliPlasmaLaser()
-    {
-        BukaPopUpPeluru(1, hargaPlasma, "Plasma Laser");
-    }
+    public void BeliPlasmaLaser() { ProsesKlikTombolSenjata(1, hargaPlasma, "Plasma Laser"); }
+    public void BeliHomingRocket() { ProsesKlikTombolSenjata(2, hargaRoket, "Homing Rocket"); }
+    public void BeliRamboBurst() { ProsesKlikTombolSenjata(3, hargaRambo, "Rambo Burst"); }
 
-    public void BeliHomingRocket()
+    void ProsesKlikTombolSenjata(int idSenjata, int harga, string namaSenjata)
     {
-        BukaPopUpPeluru(2, hargaRoket, "Homing Rocket");
-    }
+        string statusKey = "SenjataDimiliki_" + idSenjata;
+        bool sudahPunya = PlayerPrefs.GetInt(statusKey, 0) == 1;
 
-    public void BeliRamboBurst()
-    {
-        BukaPopUpPeluru(3, hargaRambo, "Rambo Burst");
-    }
-
-    void BukaPopUpPeluru(int idSenjata, int harga, string namaSenjata)
-    {
-        idSenjataDipilihSementara = idSenjata;
-        hargaSenjataSementara = harga;
-
-        if (panelNotifPeluru != null)
+        if (sudahPunya)
         {
-            panelNotifPeluru.SetActive(true);
-            if (teksNotifPeluru != null)
+            PlayerPrefs.SetInt("ActiveWeapon", idSenjata);
+            PlayerPrefs.Save();
+            if (WeaponManager.Instance != null) WeaponManager.Instance.ChangeWeaponInstantly(idSenjata);
+            UpdateWeaponShopVisual();
+        }
+        else
+        {
+            idSenjataDipilihSementara = idSenjata;
+            hargaSenjataSementara = harga;
+            if (panelNotifPeluru != null)
             {
-                teksNotifPeluru.text = $"{harga}";
+                panelNotifPeluru.SetActive(true);
+                if (teksNotifPeluru != null) teksNotifPeluru.text = $"{harga}";
             }
         }
     }
@@ -227,22 +195,15 @@ public class ShopManager : MonoBehaviour
         {
             TotalKoin -= hargaSenjataSementara;
             PlayerPrefs.SetInt("TotalKoin", TotalKoin);
+            PlayerPrefs.SetInt("SenjataDimiliki_" + idSenjataDipilihSementara, 1);
             PlayerPrefs.SetInt("ActiveWeapon", idSenjataDipilihSementara);
             PlayerPrefs.Save();
 
-            if (WeaponManager.Instance != null)
-            {
-                WeaponManager.Instance.ChangeWeaponInstantly(idSenjataDipilihSementara);
-            }
+            if (WeaponManager.Instance != null) WeaponManager.Instance.ChangeWeaponInstantly(idSenjataDipilihSementara);
 
             UpdateCoinUI();
-            Debug.Log($"[Shop] Sukses beli senjata ID: {idSenjataDipilihSementara}");
+            UpdateWeaponShopVisual();
         }
-        else
-        {
-            Debug.LogWarning("[Shop] Koin kurang!");
-        }
-
         TombolPeluruNo();
     }
 
@@ -253,12 +214,107 @@ public class ShopManager : MonoBehaviour
         if (panelNotifPeluru != null) panelNotifPeluru.SetActive(false);
     }
 
+    void UpdateWeaponShopVisual()
+    {
+        int senjataAktif = PlayerPrefs.GetInt("ActiveWeapon", 0);
+
+        // --- 1. SETTING VISUAL PLASMA (ID: 1) ---
+        bool punyaPlasma = PlayerPrefs.GetInt("SenjataDimiliki_1", 0) == 1;
+        if (punyaPlasma)
+        {
+            if (imgTombolPlasma != null)
+            {
+                Button btn = imgTombolPlasma.GetComponent<Button>();
+                if (senjataAktif == 1)
+                {
+                    imgTombolPlasma.sprite = tombolUsedSprite;
+                    if (btn != null) btn.transition = Selectable.Transition.None;
+                }
+                else
+                {
+                    imgTombolPlasma.sprite = tombolUseSprite;
+                    if (btn != null) btn.transition = Selectable.Transition.SpriteSwap;
+                }
+            }
+            if (teksTombolPlasma != null) teksTombolPlasma.text = "";
+        }
+        else
+        {
+            if (imgTombolPlasma != null && normalSpritePlasma != null)
+            {
+                imgTombolPlasma.sprite = normalSpritePlasma;
+                Button btn = imgTombolPlasma.GetComponent<Button>();
+                if (btn != null) btn.transition = Selectable.Transition.SpriteSwap;
+            }
+            if (teksTombolPlasma != null) teksTombolPlasma.text = hargaPlasma.ToString();
+        }
+
+        // --- 2. SETTING VISUAL ROKET (ID: 2) ---
+        bool punyaRoket = PlayerPrefs.GetInt("SenjataDimiliki_2", 0) == 1;
+        if (punyaRoket)
+        {
+            if (imgTombolRoket != null)
+            {
+                Button btn = imgTombolRoket.GetComponent<Button>();
+                if (senjataAktif == 2)
+                {
+                    imgTombolRoket.sprite = tombolUsedSprite;
+                    if (btn != null) btn.transition = Selectable.Transition.None;
+                }
+                else
+                {
+                    imgTombolRoket.sprite = tombolUseSprite;
+                    if (btn != null) btn.transition = Selectable.Transition.SpriteSwap;
+                }
+            }
+            if (teksTombolRoket != null) teksTombolRoket.text = "";
+        }
+        else
+        {
+            if (imgTombolRoket != null && normalSpriteRoket != null)
+            {
+                imgTombolRoket.sprite = normalSpriteRoket;
+                Button btn = imgTombolRoket.GetComponent<Button>();
+                if (btn != null) btn.transition = Selectable.Transition.SpriteSwap;
+            }
+            if (teksTombolRoket != null) teksTombolRoket.text = hargaRoket.ToString();
+        }
+
+        // --- 3. SETTING VISUAL RAMBO (ID: 3) ---
+        bool punyaRambo = PlayerPrefs.GetInt("SenjataDimiliki_3", 0) == 1;
+        if (punyaRambo)
+        {
+            if (imgTombolRambo != null)
+            {
+                Button btn = imgTombolRambo.GetComponent<Button>();
+                if (senjataAktif == 3)
+                {
+                    imgTombolRambo.sprite = tombolUsedSprite;
+                    if (btn != null) btn.transition = Selectable.Transition.None;
+                }
+                else
+                {
+                    imgTombolRambo.sprite = tombolUseSprite;
+                    if (btn != null) btn.transition = Selectable.Transition.SpriteSwap;
+                }
+            }
+            if (teksTombolRambo != null) teksTombolRambo.text = "";
+        }
+        else
+        {
+            if (imgTombolRambo != null && normalSpriteRambo != null)
+            {
+                imgTombolRambo.sprite = normalSpriteRambo;
+                Button btn = imgTombolRambo.GetComponent<Button>();
+                if (btn != null) btn.transition = Selectable.Transition.SpriteSwap;
+            }
+            if (teksTombolRambo != null) teksTombolRambo.text = hargaRambo.ToString();
+        }
+    }
+
     void UpdateCoinUI()
     {
         TotalKoin = PlayerPrefs.GetInt("TotalKoin", 0);
-        if (coinText != null)
-        {
-            coinText.text = TotalKoin.ToString();
-        }
+        if (coinText != null) coinText.text = TotalKoin.ToString();
     }
 }

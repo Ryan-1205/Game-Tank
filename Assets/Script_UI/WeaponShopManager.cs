@@ -32,11 +32,13 @@ public class WeaponShopManager : MonoBehaviour
     {
         if (panelNotifPeluru != null) panelNotifPeluru.SetActive(false);
 
-        // Setup awal biar semua tombol matiin transition Unity-nya
+        // Kodingan pengganggu di bawah ini sudah dimatikan:
+        /*
         for (int i = 0; i < tombolPeluru.Length; i++)
         {
             tombolPeluru[i].transition = Selectable.Transition.None;
         }
+        */
     }
 
     public void KlikTombolPeluru(int index)

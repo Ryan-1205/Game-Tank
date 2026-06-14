@@ -1,2 +1,30 @@
 fileFormatVersion: 2
 guid: 74311fc0f25fd4a45937665967cd1081
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - coinText: {instanceID: 0}
+  - tankDisplayImage: {instanceID: 0}
+  - btnBuyTank: {instanceID: 0}
+  - btnUseTank: {instanceID: 0}
+  - tombolUseSprite: {fileID: 1780346126317294785, guid: 21b0267d74960a14d84d2b85ac5bd5fa, type: 3}
+  - tombolUsedSprite: {fileID: 1780346126317294785, guid: 21b0267d74960a14d84d2b85ac5bd5fa, type: 3}
+  - normalSpritePlasma: {fileID: 5530489963333927709, guid: 6105459858398c942a842ea4ab3e0caa, type: 3}
+  - normalSpriteRoket: {fileID: -4478703775913692564, guid: ce42d2673b6a33e44be927c247193f71, type: 3}
+  - normalSpriteRambo: {fileID: 4893907754814711077, guid: 9ee76eb15be7c7d43bda3175e81038a3, type: 3}
+  - panelNotifTank: {instanceID: 0}
+  - teksNotifTank: {instanceID: 0}
+  - panelNotifPeluru: {instanceID: 0}
+  - teksNotifPeluru: {instanceID: 0}
+  - teksTombolPlasma: {instanceID: 0}
+  - teksTombolRoket: {instanceID: 0}
+  - teksTombolRambo: {instanceID: 0}
+  - imgTombolPlasma: {instanceID: 0}
+  - imgTombolRoket: {instanceID: 0}
+  - imgTombolRambo: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -2317,7 +2317,6 @@ GameObject:
   m_Component:
   - component: {fileID: 732089919}
   - component: {fileID: 732089918}
-  - component: {fileID: 732089921}
   - component: {fileID: 732089922}
   m_Layer: 0
   m_Name: Manager
@@ -2353,39 +2352,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &732089921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732089917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6be8bb88a66b7874b9a49c4e8432c3cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponShopManager
-  panelNotifPeluru: {fileID: 447933819}
-  txtHargaPeluru: {fileID: 1625673034}
-  tombolPeluru:
-  - {fileID: 2004850287}
-  - {fileID: 341430288}
-  - {fileID: 592769250}
-  hargaPeluru: 43000000c8000000f4010000
-  isPeluruBought: 000000
-  dataGambarSenjata:
-  - namaSenjata: Burst
-    spriteNormal: {fileID: 4893907754814711077, guid: 9ee76eb15be7c7d43bda3175e81038a3, type: 3}
-    spriteUdahBeli: {fileID: 4893907754814711077, guid: 9ee76eb15be7c7d43bda3175e81038a3, type: 3}
-    spriteSelected: {fileID: 8524325814564883251, guid: bfde08e9ea2576543b1925486c0f7e93, type: 3}
-  - namaSenjata: Plasma
-    spriteNormal: {fileID: 5530489963333927709, guid: 6105459858398c942a842ea4ab3e0caa, type: 3}
-    spriteUdahBeli: {fileID: 5530489963333927709, guid: 6105459858398c942a842ea4ab3e0caa, type: 3}
-    spriteSelected: {fileID: 2725849395635251454, guid: 7a1b0c8cfd177d84487f630ceebccab9, type: 3}
-  - namaSenjata: Missile
-    spriteNormal: {fileID: -4478703775913692564, guid: ce42d2673b6a33e44be927c247193f71, type: 3}
-    spriteUdahBeli: {fileID: -4478703775913692564, guid: ce42d2673b6a33e44be927c247193f71, type: 3}
-    spriteSelected: {fileID: 427061954311703353, guid: e57a14fdde7f15d4096e48960f075499, type: 3}
 --- !u!114 &732089922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2408,6 +2374,9 @@ MonoBehaviour:
   - {fileID: -20479217534241763, guid: 720ae9c4f4b24434787edff61ec69e80, type: 3}
   tombolUseSprite: {fileID: 1780346126317294785, guid: 21b0267d74960a14d84d2b85ac5bd5fa, type: 3}
   tombolUsedSprite: {fileID: 1780346126317294785, guid: 21b0267d74960a14d84d2b85ac5bd5fa, type: 3}
+  normalSpritePlasma: {fileID: 5530489963333927709, guid: 6105459858398c942a842ea4ab3e0caa, type: 3}
+  normalSpriteRoket: {fileID: -4478703775913692564, guid: ce42d2673b6a33e44be927c247193f71, type: 3}
+  normalSpriteRambo: {fileID: 4893907754814711077, guid: 9ee76eb15be7c7d43bda3175e81038a3, type: 3}
   tankPrefabs:
   - {fileID: 7284899741796766009, guid: d6e2260f3abf8db46afb816418e03b6b, type: 3}
   - {fileID: 7284899741796766009, guid: 973e55c8849bdaf468512a54030c7775, type: 3}
@@ -2424,6 +2393,12 @@ MonoBehaviour:
   hargaRambo: 150
   panelNotifPeluru: {fileID: 447933819}
   teksNotifPeluru: {fileID: 1625673034}
+  teksTombolPlasma: {fileID: 0}
+  teksTombolRoket: {fileID: 0}
+  teksTombolRambo: {fileID: 0}
+  imgTombolPlasma: {fileID: 0}
+  imgTombolRoket: {fileID: 0}
+  imgTombolRambo: {fileID: 0}
 --- !u!1 &747077398
 GameObject:
   m_ObjectHideFlags: 0
