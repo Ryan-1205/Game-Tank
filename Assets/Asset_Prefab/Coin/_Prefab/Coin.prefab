@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf718800771d424db541daffd958413, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  suaraKoinCling: {fileID: 8300000, guid: 2c3f1026489b97e409714ee0bda5c7f0, type: 3}
   coinValue: 10
 --- !u!58 &4610752379884937474
 CircleCollider2D:
