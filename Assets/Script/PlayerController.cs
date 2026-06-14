@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // WAJIB: Menggunakan package Input System baru
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,94 +9,120 @@ public class PlayerController : MonoBehaviour
     public Transform turret; 
 
     [Header("Shooting Settings")]
-    public GameObject bulletPrefab; // Tarik prefab peluru dari folder Project ke sini
-    public Transform firePoint;     // Objek kosong di ujung laras tank
+    public GameObject bulletPrefab; 
+    public Transform firePoint;     
     public float bulletForce = 20f;
-
-    // Tempat memasukkan prefab cahaya di Inspector
     public GameObject muzzleFlashPrefab; 
 
-    // === BARIS BARU: SISTEM EKONOMI SHOP ===
     [Header("Economy System")]
-    public int totalCoins = 0; // Tabungan koin awal player (bisa dipantau di Inspector)
+    public int totalCoins = 0; 
+
+    [Header("Smooth Settings")]
+    public float rotationSpeed = 10f; 
+
+    // === VARIABEL BARU: Referensi Input Action dari Package ===
+    [Header("Input Actions Reference")]
+    public InputAction moveAction;
+    public InputAction shootAction;
 
     Vector2 movement;
     Vector2 mousePos;
 
+    private void OnEnable()
+    {
+        // Mengaktifkan input action saat objek aktif
+        moveAction.Enable();
+        shootAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        // Mematikan input action saat objek tidak aktif (mencegah memory leak)
+        moveAction.Disable();
+        shootAction.Disable();
+    }
+
     void Update()
     {
-        // Input jalan (WASD)
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        // 1. MENGOLAH INPUT JALAN (Value Vector2)
+        // Membaca input hardware (WASD / Analog) menggunakan package baru
+        movement = moveAction.ReadValue<Vector2>();
 
-        // Ambil posisi mouse
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        // Deteksi klik kiri untuk nembak
-        if (Input.GetButtonDown("Fire1"))
+        // 2. MEMBACA POSISI MOUSE
+        // Menggunakan Pointer bawaan Input System baru untuk akurasi koordinat layar
+        if (Pointer.current != null)
         {
-            Shoot();
+            Vector3 screenMousePos = Pointer.current.position.ReadValue();
+            mousePos = Camera.main.ScreenToWorldPoint(screenMousePos);
+        }
+
+        // 3. DEMONSTRASI PEMAHAMAN INPUT STATE (Up, Down, Hold)
+        DemonstrateInputStates();
+    }
+
+    // FUNGSI UTAMA: Demonstrasi kemampuan mengolah Input State dari Hardware
+    // FUNGSI UTAMA: Mengolah Input State dari Hardware menggunakan InputAction secara benar
+    void DemonstrateInputStates()
+    {
+        // A. STATE: DOWN (Dipicu tepat pada frame saat tombol ditekan klik kiri/space)
+        if (shootAction.triggered && shootAction.ReadValue<float>() > 0f)
+        {
+            Debug.Log("<color=green><b>[INPUT STATE] DOWN:</b> Tombol tembak baru saja ditekan!</color>");
+            Shoot(); // Tank menembak satu peluru
+        }
+
+        // B. STATE: HOLD (Membaca tombol jika sedang ditahan aktif oleh player)
+        // Nilai float > 0 artinya tombol sedang amblas ditekan ke dalam
+        if (shootAction.ReadValue<float>() > 0f)
+        {
+            // Sengaja di-comment biar Console lo ga penuh text spam setiap frame jalan
+            // Debug.Log("<color=yellow><b>[INPUT STATE] HOLD:</b> Player sedang menahan tombol tembak...</color>");
+        }
+
+        // C. STATE: UP (Dipicu saat dilepas)
+        // Dipicu saat action aktif (triggered) tetapi nilai value-nya sudah balik ke 0 (dilepas)
+        if (shootAction.triggered && shootAction.ReadValue<float>() == 0f)
+        {
+            Debug.Log("<color=red><b>[INPUT STATE] UP:</b> Tombol tembak dilepas oleh player.</color>");
         }
     }
 
-    [Header("Smooth Settings")]
-    public float rotationSpeed = 10f; // Semakin besar, semakin cepat muternya
-
     void FixedUpdate()
     {
-        // 1. Gerak badan tank
+        // Gerak badan tank (Menggunakan hasil olahan Input System baru)
         rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
 
-        // 2. Rotasi BADAN tank (Smooth Rotation)
+        // Rotasi BADAN tank (Smooth Rotation)
         if (movement != Vector2.zero)
         {
             float targetAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
-            
-            // Menggunakan LerpAngle supaya transisinya halus dan tidak patah-patah
             float smoothAngle = Mathf.LerpAngle(rb.rotation, targetAngle, rotationSpeed * Time.fixedDeltaTime);
             rb.rotation = smoothAngle;
         }
 
-        // 3. Rotasi TURRET mengikuti Mouse
+        // Rotasi TURRET mengikuti Mouse
         Vector2 lookDir = mousePos - rb.position;
         float turretAngle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
-        
-        // Tips: Turret juga bisa di-lerp kalau mau terasa lebih realistis beratnya
         turret.rotation = Quaternion.Euler(0, 0, turretAngle);
     }
 
     void Shoot()
     {
-        // 1. Buat peluru di posisi dan rotasi FirePoint
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        
-        // 2. Ambil Rigidbody2D peluru
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-        
-        // 3. Dorong peluru ke depan
         bulletRb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
 
-        // --- LOGIKA MEMUNCULKAN CAHAYA ---
         if (muzzleFlashPrefab != null)
         {
-            // Munculkan objek cahaya tepat di posisi firePoint
             GameObject flash = Instantiate(muzzleFlashPrefab, firePoint.position, firePoint.rotation);
-            
-            // Tempelkan objek cahaya sebagai anak dari firePoint agar ikut bergerak
             flash.transform.SetParent(firePoint);
-
-            // Hancurkan objek cahaya setelah 0.1 detik (kilatan cepat)
             Destroy(flash, 0.1f);
         }
     }
 
-    // === FUNCTION BARU: MENAMBAH KOIN KE DOMPET ===
-    // Fungsi ini bakal dipanggil oleh script CoinItem.cs pas koin ketabrak tank player
     public void AddCoins(int amount)
     {
         totalCoins += amount;
         Debug.Log($"<color=#FFD700><b>[WALLET]</b> Koin Bertambah! +{amount} | Total Dompet: {totalCoins} Koin</color>");
-        
-        // Nanti di sini tempat kita buat nge-update teks koin di UI Canvas UI lo
     }
 }

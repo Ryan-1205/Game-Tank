@@ -5603,6 +5603,72 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 2320933484067640707, guid: 57e7038f21069ea40bc2960b8eaa2a77, type: 3}
   totalCoins: 0
   rotationSpeed: 10
+  moveAction:
+    m_Name: Move
+    m_Type: 0
+    m_ExpectedControlType: Vector2
+    m_Id: 74bfd394-0d84-4aa1-8a29-5cd85ba876c5
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 2D Vector
+      m_Id: 806cef15-d572-4ac7-a90e-df873c1f681e
+      m_Path: 2DVector
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 4
+    - m_Name: up
+      m_Id: 7e351af6-ee97-4808-873d-eb659655c5b2
+      m_Path: <Keyboard>/w
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    - m_Name: down
+      m_Id: e0f38998-f673-4d9f-8a55-aab18f5d3cc8
+      m_Path: <Keyboard>/s
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    - m_Name: left
+      m_Id: 2c14f3a5-6cf2-4b90-9b62-70da420a6482
+      m_Path: <Keyboard>/a
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    - m_Name: right
+      m_Id: 59e80ff3-a5fe-4725-993a-db5364674f34
+      m_Path: <Keyboard>/d
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    m_Flags: 0
+  shootAction:
+    m_Name: Shoot
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: a09ea94f-302e-4ced-b48c-2b6e6e56cab8
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: e6d88a4c-c2ac-4186-91d1-e958627351f4
+      m_Path: <Mouse>/leftButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Shoot
+      m_Flags: 0
+    m_Flags: 0
 --- !u!114 &7562813907615798752
 MonoBehaviour:
   m_ObjectHideFlags: 0
