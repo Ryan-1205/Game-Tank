@@ -1,7 +1,7 @@
 using UnityEngine;
-using Ilumisoft.HealthSystem; 
+using Ilumisoft.HealthSystem;
 
-public class Health : HealthComponent 
+public class Health : HealthComponent
 {
     [Header("Base Health Settings (Aset Template)")]
     [SerializeField] private float maxHealth = 3.0f;
@@ -12,18 +12,18 @@ public class Health : HealthComponent
     public override bool IsAlive => CurrentHealth > 0.0f;
 
     [Header("Death Visual Effect")]
-    public GameObject deathExplosionPrefab; 
+    public GameObject deathExplosionPrefab;
 
     [Header("Death Audio Effects (3 Variasi)")]
-    public AudioClip normalExplosionSound; 
-    public AudioClip laserExplosionSound;  
-    public AudioClip rocketExplosionSound; 
+    public AudioClip normalExplosionSound;
+    public AudioClip laserExplosionSound;
+    public AudioClip rocketExplosionSound;
 
     private string lastDamageType = "normal";
 
     [Header("Loot Settings")]
-    public GameObject coinPrefab; 
-    [Range(0, 100)] public float dropChance = 100f; 
+    public GameObject coinPrefab;
+    [Range(0, 100)] public float dropChance = 100f;
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class Health : HealthComponent
 
         if (Mathf.Abs(difference) > 0.0f)
         {
-            OnHealthChanged?.Invoke(difference); 
+            OnHealthChanged?.Invoke(difference);
         }
     }
 
@@ -52,7 +52,7 @@ public class Health : HealthComponent
 
         if (changeAmount > 0.0f)
         {
-            OnHealthChanged?.Invoke(changeAmount); 
+            OnHealthChanged?.Invoke(changeAmount);
         }
     }
 
@@ -69,12 +69,12 @@ public class Health : HealthComponent
 
         if (Mathf.Abs(changeAmount) > 0.0f)
         {
-            OnHealthChanged?.Invoke(changeAmount); 
+            OnHealthChanged?.Invoke(changeAmount);
 
             if (CurrentHealth <= 0.0f)
             {
-                Die(); 
-                OnHealthEmpty?.Invoke(); 
+                Die();
+                OnHealthEmpty?.Invoke();
             }
         }
     }
@@ -92,7 +92,7 @@ public class Health : HealthComponent
             Instantiate(deathExplosionPrefab, transform.position, Quaternion.identity);
         }
 
-        AudioClip clipToPlay = normalExplosionSound; 
+        AudioClip clipToPlay = normalExplosionSound;
 
         if (lastDamageType == "laser")
         {
@@ -108,6 +108,17 @@ public class Health : HealthComponent
             AudioSource.PlayClipAtPoint(clipToPlay, transform.position);
         }
 
+        // --- CODINGAN BARU: CEK APAPAKAH YANG MATI ITU PLAYER ---
+        if (gameObject.CompareTag("Player"))
+        {
+            GameOverManager gameOverScript = FindObjectOfType<GameOverManager>();
+            if (gameOverScript != null)
+            {
+                gameOverScript.MunculkanGameOver();
+            }
+        }
+        // -------------------------------------------------------
+
         if (gameObject.CompareTag("Enemy") || gameObject.CompareTag("Boss"))
         {
             if (coinPrefab != null)
@@ -117,7 +128,7 @@ public class Health : HealthComponent
                 {
                     GameObject spawnedCoin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
                     CoinItem coinScript = spawnedCoin.GetComponent<CoinItem>();
-                    
+
                     if (coinScript != null)
                     {
                         if (gameObject.CompareTag("Boss")) coinScript.coinValue = 200;

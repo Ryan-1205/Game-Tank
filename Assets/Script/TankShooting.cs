@@ -2,40 +2,47 @@ using UnityEngine;
 
 public class TankShooting : MonoBehaviour
 {
-    public GameObject bulletPrefab; 
-    public Transform firePoint;     
-    
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+
     [Header("Visual & Force Settings")]
     public float bulletForce = 20f;
-    public GameObject muzzleFlashPrefab; 
+    public GameObject muzzleFlashPrefab;
 
     [Header("Shop Integration")]
-    public GameObject[] allBulletPrefabs; 
+    public GameObject[] allBulletPrefabs;
 
     [Header("Continuous Laser Settings")]
-    public LineRenderer laserLineRenderer; 
+    public LineRenderer laserLineRenderer;
     public float laserRange = 20f;
-    public LayerMask laserHitLayers;       
+    public LayerMask laserHitLayers;
     public int laserDamagePerFrame = 1;
-    public float damageInterval = 0.2f;    
+    public float damageInterval = 0.5f;
     private float nextDamageTime;
+
+    // === FITUR BARU: OVERHEAT LASER ===
+    [Header("Laser Overheat Settings")]
+    public float maxLaserTime = 3f; // Maksimal ditahan (detik) sebelum kepanasan
+    public float laserCooldown = 3f; // Lama hukuman nunggu pendinginan (detik)
+
+    private float currentLaserHeat = 0f; // Menyimpan suhu laser saat ini
+    private bool isOverheated = false; // Status apakah laser lagi rusak/kepanasan
 
     [Header("Laser Audio")]
     public AudioClip laserLoopClip;
 
+    private PlayerController playerController;
     private AudioSource sfxSource;
-    private Collider2D[] allTankColliders; // Array untuk menyimpan semua collider milik tank dan child-nya
+    private Collider2D[] allTankColliders;
 
     void Start()
     {
         sfxSource = GetComponent<AudioSource>();
-        
-        // Ambil semua collider di badan, turret, dan moncong tank agar tidak kecolongan
-        allTankColliders = GetComponentsInChildren<Collider2D>(); 
+        playerController = GetComponentInParent<PlayerController>();
+        allTankColliders = GetComponentsInChildren<Collider2D>();
 
-        // Ambil indeks tank yang aktif digunakan player
         int activeTankIndex = PlayerPrefs.GetInt("SelectedTank", 0);
-        
+
         if (allBulletPrefabs != null && activeTankIndex < allBulletPrefabs.Length)
         {
             if (allBulletPrefabs[activeTankIndex] != null)
@@ -49,7 +56,6 @@ public class TankShooting : MonoBehaviour
 
     void Update()
     {
-        // 1. Ambil peluru aktif secara dinamis dari toko (WeaponManager) tiap frame
         GameObject peluruYangDipakai = bulletPrefab;
 
         if (WeaponManager.Instance != null && WeaponManager.Instance.currentBulletPrefab != null)
@@ -59,27 +65,64 @@ public class TankShooting : MonoBehaviour
 
         if (peluruYangDipakai == null) return;
 
-        // 2. Cek tipe peluru secara real-time langsung di Update
         bool apakahLaser = peluruYangDipakai.GetComponent<PlasmaLaser>() != null || peluruYangDipakai.name.ToLower().Contains("laser");
 
-        // 3. Atur eksekusi input berdasarkan tipe peluru
         if (apakahLaser)
         {
-            if (Input.GetButton("Fire1")) 
+            // === LOGIKA OVERHEAT LASER ===
+            if (isOverheated)
             {
-                ShootContinuousLaser();
+                // Kalau lagi overheat, tombol ditekan pun ga ngaruh.
+                // Turunkan suhu paksa sampai 0 dalam waktu 2 detik (laserCooldown)
+                currentLaserHeat -= Time.deltaTime * (maxLaserTime / laserCooldown);
+
+                if (currentLaserHeat <= 0f)
+                {
+                    currentLaserHeat = 0f;
+                    isOverheated = false; // Udah dingin, siap tembak lagi!
+                }
             }
-            if (Input.GetButtonUp("Fire1")) 
+            else
             {
-                StopContinuousLaser();
+                // Kalau GA overheat, baca klik player
+                if (Input.GetButton("Fire1"))
+                {
+                    currentLaserHeat += Time.deltaTime; // Suhu naik seiring waktu ditekan
+
+                    if (currentLaserHeat >= maxLaserTime)
+                    {
+                        // BATAS MAKSIMAL TERCAPAI (4 Detik)!
+                        isOverheated = true;
+                        StopContinuousLaser(); // Paksa matiin lasernya
+                    }
+                    else
+                    {
+                        ShootContinuousLaser(); // Masih aman, lanjut tembak!
+                    }
+                }
+                else
+                {
+                    // Kalau player ngelepas kliknya sebelum 4 detik
+                    StopContinuousLaser();
+
+                    // Suhu laser turun pelan-pelan (nyicil pendinginan)
+                    if (currentLaserHeat > 0f)
+                    {
+                        currentLaserHeat -= Time.deltaTime;
+                    }
+                }
             }
         }
         else
         {
-            if (Input.GetButtonDown("Fire1"))
+            // === PELURU FISIK (Rambo, Roket, dll) TETAP PAKAI COOLDOWN SCRIPTABLE OBJECT ===
+            if (Input.GetButtonDown("Fire1") || Input.GetButton("Fire1"))
             {
-                StopContinuousLaser(); 
-                ShootPhysicalBullet(peluruYangDipakai);
+                if (playerController != null && playerController.CanShootNow())
+                {
+                    StopContinuousLaser();
+                    ShootPhysicalBullet(peluruYangDipakai);
+                }
             }
         }
     }
@@ -93,7 +136,6 @@ public class TankShooting : MonoBehaviour
 
         GameObject projectile = Instantiate(peluru, spawnPosition, spawnRotation);
 
-        // Matikan tabrakan peluru dengan semua collider tank
         if (allTankColliders != null)
         {
             Collider2D projectileCollider = projectile.GetComponent<Collider2D>();
@@ -106,22 +148,18 @@ public class TankShooting : MonoBehaviour
             }
         }
 
-        // Berikan kecepatan awal untuk peluru
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
             rb.linearVelocity = firePoint.up * bulletForce;
         }
 
-        // HUBUNGKAN DATA TOKO / RAMBO
         RamboBurstBullet ramboScript = projectile.GetComponent<RamboBurstBullet>();
         if (ramboScript != null)
         {
-            // Beritahu peluru rambo di mana letak moncong tank kamu agar peluru berikutnya lahir di sana
             ramboScript.moncongTank = firePoint;
         }
 
-        // EFEK VISUAL MUZZLE FLASH
         if (muzzleFlashPrefab != null)
         {
             GameObject flash = Instantiate(muzzleFlashPrefab, spawnPosition, spawnRotation);
@@ -129,9 +167,6 @@ public class TankShooting : MonoBehaviour
             Destroy(flash, 0.1f);
         }
 
-        // KOREKSI UTAMA FILTER AUDIO: 
-        // Jika peluru yang ditembakkan BUKAN Rambo, langsung mainkan suara tembakan tank.
-        // Tidak perlu mengecek 'peluru == bulletPrefab' lagi agar sinkron dengan Toko/WeaponManager.
         if (ramboScript == null)
         {
             if (sfxSource != null && sfxSource.clip != null)
@@ -149,7 +184,7 @@ public class TankShooting : MonoBehaviour
 
         if (sfxSource != null && laserLoopClip != null)
         {
-            sfxSource.loop = true; 
+            sfxSource.loop = true;
             if (!sfxSource.isPlaying)
             {
                 sfxSource.clip = laserLoopClip;
@@ -195,7 +230,7 @@ public class TankShooting : MonoBehaviour
         if (sfxSource != null && sfxSource.clip == laserLoopClip)
         {
             sfxSource.Stop();
-            sfxSource.loop = false; 
+            sfxSource.loop = false;
         }
     }
 
@@ -204,6 +239,5 @@ public class TankShooting : MonoBehaviour
         if (newBullet == null) return;
 
         bulletPrefab = newBullet;
-        Debug.Log("Weapon Changed via UI: " + newBullet.name);
     }
 }

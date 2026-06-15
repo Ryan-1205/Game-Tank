@@ -23,13 +23,16 @@ public class CoinItem : MonoBehaviour
             if (player != null)
             {
                 player.AddCoins(coinValue);
-                
-                // KOREKSI: Mainkan suara koin tepat di posisi koin berada sebelum objeknya hancur
-                if (suaraKoinCling != null)
+
+                // BARU & LEBIH KENCENG: Putar suara 2D lewat AudioSource milik Tank Player
+                AudioSource playerAudio = other.GetComponent<AudioSource>();
+                if (playerAudio != null && suaraKoinCling != null)
                 {
-                    AudioSource.PlayClipAtPoint(suaraKoinCling, transform.position);
+                    // Angka 2.0f di bawah ini adalah booster volumenya! (2 kali lipat lebih kenceng dari normal)
+                    // Kalau masih kurang kenceng, lu bisa naikin jadi 2.5f atau 3.0f sesuai selera lu.
+                    playerAudio.PlayOneShot(suaraKoinCling, 8.0f);
                 }
-                
+
                 Destroy(gameObject); // Hancurkan objek koin dari map
             }
         }
